@@ -1,0 +1,58 @@
+###
+
+GET http://localhost/api/tickets/1 HTTP/1.1
+
+###
+
+GET http://localhost/api/blocks/ HTTP/1.1
+
+###
+
+POST http://localhost/api/tickets/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "state": 0,
+    "title": "prova",
+    "author_id": 1,
+    "category": "inquiry",
+    "submission_time": 1111111111,
+    "content": "this is a test!\nquesta è una prova!"
+}
+
+###
+
+GET http://localhost/api/tickets/close/12 HTTP/1.1
+
+###
+
+PUT http://localhost/api/tickets/12 HTTP/1.1
+Content-Type: application/json
+
+{
+    "category": "maintenance"
+}
+
+###
+
+DELETE http://localhost/api/tickets/12 HTTP/1.1
+
+###
+
+POST http://localhost/api/blocks/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ticket_id": 8,
+    "author_id": 1,
+    "creation_time": 1111111111,
+    "content": "this is a test!\nquesta è una prova!"
+}
+
+###
+
+DELETE http://localhost/api/blocks/ HTTP/1.1
+
+###
+
+
