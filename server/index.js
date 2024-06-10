@@ -17,7 +17,7 @@ const app = new express();
 const port = 80;
 const maxTitleLength = 30;
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5174',
   credentials: true,
 };
 const sessionOptions = {
@@ -45,6 +45,7 @@ const isLoggedIn = (req, res, next) => {
   return res.status(401).json({error: 'Not authorized'});
   }
 }
+
 
 // activate the server
 app.listen(port, 
@@ -116,26 +117,33 @@ app.get('/api',
     res.send(text);
 });
 
-app.get('/api/tickets', 
+app.get('/api/tickets',
   (req, res) => {
     ticketDao.getAllTickets()
-      .then(tickets => res.json(tickets))
+      .then(tickets => {
+        if (req.isAuthenticated()) { res.json(tickets) }
+        else {
+          tickets.forEach(t => { delete t.content; });
+          res.json(tickets);
+        }
+      })
       .catch((err) => res.status(500).json(err));
-});
+  });
 
 app.get('/api/tickets/:tid',
-[check('tid').isInt({min: 1})],
+  [check('tid').isInt({ min: 1 })],
   async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
     if (!errors.isEmpty()) {
-      return res.status(422).json( errors.errors );
+      return res.status(422).json(errors.errors);
     }
     try {
       const result = await ticketDao.getTicket(req.params.tid);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
+      if (result.error) { res.status(404).json(result); }
+      if (!req.isAuthenticated()) {
+        delete result.content;
+      }
+      res.json(result);
     } catch (err) {
       res.status(500).send();
     }
@@ -190,6 +198,7 @@ app.put('/api/tickets/open/:tid',
 app.put('/api/tickets/close/:tid',
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
+
     const errors = validationResult(req).formatWith(errorFormatter);
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.errors);
@@ -300,7 +309,7 @@ app.post('/api/sessions',
       if (err)
         return next(err);
         if (!user) {
-          return res.status(401).json({ error: info});
+          return res.status(401).json({error: info});
         }
         req.login(user, (err) => {
           if (err)

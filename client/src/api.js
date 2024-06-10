@@ -24,6 +24,8 @@ function getJSON(httpResponsePromise) {
     });
 }
 
+// When fetching a ticket by ID:
+//      TypeError: tickets.map is not a function
 async function getTickets(tid) {
     return getJSON(tid ?
         fetch(SERVER_URL + `/api/tickets/${tid}`)
@@ -126,23 +128,50 @@ function deleteBlock(bid) {
     );   
 }
 
-const ticket = {
-    state: 0,
-    title: "title",
-    author_id: 1,
-    category: "inquiry",
-    content: "this is a test!\nquesta è una prova!\nproviamo?"
+async function login(credentials) {
+    return getJSON(
+        fetch(SERVER_URL + '/api/sessions', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            credentials: 'include',
+            body: JSON.stringify(credentials)
+        })
+    );
 }
 
-const block = {
-    ticket_id: 15,
-    author_id: 2,
-    content: "proviamo anche il blocco!let's try the block too!"
+async function info() {
+    return getJSON(
+        fetch(SERVER_URL + '/api/sessions/current', {
+            credentials: 'include'
+        })
+    );
 }
 
-const result = await deleteBlock(11);
-console.log(result);
+async function logout() {
+    return getJSON(
+        fetch(SERVER_URL + '/api/sessions/current', {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+    );
+}
 
+// const ticket = {
+//     state: 0,
+//     title: "title",
+//     author_id: 1,
+//     category: "inquiry",
+//     content: "this is a test!\nquesta è una prova!\nproviamo?"
+// }
 
-// const api = { getTickets, addTicket, openTicket, closeTicket, changeCategory, deleteTicket, getBlocks, addBlock, deleteBlock }
-// export default api;
+// const block = {
+//     ticket_id: 15,
+//     author_id: 2,
+//     content: "proviamo anche il blocco!let's try the block too!"
+// }
+
+// const result = await getTickets(6);
+// console.log(result);
+
+const api = { getTickets, addTicket, openTicket, closeTicket, changeCategory, deleteTicket, getBlocks, addBlock, deleteBlock, login, info, logout }
+export default api;

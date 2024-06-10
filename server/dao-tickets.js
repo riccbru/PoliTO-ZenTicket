@@ -27,7 +27,7 @@ const returnBlock = (block) => {
 
 exports.getAllTickets = () => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT * FROM tickets';
+        const sql = 'SELECT * FROM tickets ORDER BY submission_time DESC';
         db.all(sql, (err, rows) => {
             if (err) reject(err);
             const tickets = rows.map(t => returnTicket(t));
@@ -41,7 +41,7 @@ exports.getTicket = (ticket_id) => {
         const sql = 'SELECT * FROM tickets WHERE ticket_id = ?';
         db.get(sql, [ticket_id], (err, row) => {
             if (err) reject(err);
-            if (row == undefined) {
+            if (row === undefined) {
                 resolve({error: 'Ticket not found'});
             } else {
                 resolve(returnTicket(row));

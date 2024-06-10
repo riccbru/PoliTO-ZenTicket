@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "tickets" (
     "state" INTEGER NOT NULL CHECK ("state" in (0, 1)) DEFAULT 1,
     "title" TEXT NOT NULL,
     "author_id" INTEGER NOT NULL,
-    "category" TEXT NOT NULL CHECK ("category" in ('inquiry', 'maintenance', 'new feature', 'administrative', 'payment')),
+    "category" TEXT NOT NULL CHECK ("category" in ('administrative', 'inquiry', 'maintenance', 'new feature', 'payment')),
     "submission_time" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
     FOREIGN KEY ("author_id") REFERENCES "users"("user_id")

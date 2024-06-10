@@ -1,10 +1,10 @@
 ###
 
-GET http://localhost/api/tickets/15 HTTP/1.1
+GET http://localhost/api/tickets/ HTTP/1.1
 
 ###
 
-GET http://localhost/api/blocks/ HTTP/1.1
+GET http://localhost/api/blocks/1 HTTP/1.1
 
 ###
 
