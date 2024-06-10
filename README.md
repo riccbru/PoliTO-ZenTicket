@@ -20,10 +20,10 @@
   - No request parameters
   - Request body: JSON with state, title, author_id, category, submission_time and content
   - Returns the new Ticket in JSON format
-- GET `/api/tickets/open/:tid`
+- PUT `/api/tickets/open/:tid`
   - Request parameters: ticket id
   - Returns the Ticket in JSON format
-- GET `/api/tickets/close/:tid`
+- PUT `/api/tickets/close/:tid`
   - Request parameters: ticket id
   - Returns the Ticket in JSON format 
 - PUT `/api/tickets/:tid`

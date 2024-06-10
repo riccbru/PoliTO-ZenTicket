@@ -20,7 +20,7 @@ const returnBlock = (block) => {
     b.block_id = block.block_id;
     b.ticket_id = block.ticket_id;
     b.author_id = block.author_id;
-    b.creation = block.creation;
+    b.creation_time = block.creation_time;
     b.content = block.content;
     return b;
 }
