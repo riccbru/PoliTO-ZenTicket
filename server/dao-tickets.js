@@ -44,7 +44,7 @@ exports.getTicket = (ticket_id) => {
             if (row === undefined) {
                 resolve({error: 'Ticket not found'});
             } else {
-                resolve(returnTicket(row));
+                resolve([returnTicket(row)]);
             }
         });
     });
@@ -115,7 +115,7 @@ exports.addTicket = (ticket) => {
 
 exports.getAllBlocks = () => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT * FROM blocks';
+        const sql = 'SELECT * FROM blocks ORDER BY creation_time DESC';
         db.all(sql, (err, rows) => {
             if (err) reject(err);
             const blocks = rows.map(b => returnBlock(b));
@@ -126,7 +126,7 @@ exports.getAllBlocks = () => {
 
 exports.getBlocks = (ticket_id) => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT * FROM blocks WHERE ticket_id = ?';
+        const sql = 'SELECT * FROM blocks WHERE ticket_id = ? ORDER BY creation_time DESC';
         db.all(sql, [ticket_id], (err, rows) => {
             if (err) reject(err);
             const blocks = rows.map(b => returnBlock(b));
@@ -158,4 +158,3 @@ exports.deleteBlock = (block_id) => {
         });
     });
 }
-

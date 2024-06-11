@@ -4,6 +4,27 @@ import dayjs from 'dayjs';
 
 const SERVER_URL = 'http://localhost';
 
+const timeElapsed = (timestamp) => {
+    // 'DD MMMM YYYY, HH:mm:ss'
+    const now = dayjs().unix();
+    const secElapsed = now - timestamp;
+
+    const seconds = secElapsed % 60;
+    const minutes = Math.floor((secElapsed % 3600) / 60);
+    const hours = Math.floor((secElapsed % 86400) / 3600);
+    const days = Math.floor(secElapsed / 86400);
+
+    if (days > 0) {
+        return `${days}d${hours}h`;
+    } else if (hours > 0) {
+        return `${hours}h${minutes}m`;
+    } else if (minutes > 0) {
+        return `${minutes}m${seconds}s`;
+    } else {
+        return `${seconds}s`;
+    }
+}
+
 function getJSON(httpResponsePromise) {
     return new Promise((resolve, reject) => {
         httpResponsePromise
@@ -11,11 +32,11 @@ function getJSON(httpResponsePromise) {
                 if (response.ok) {
                     response.json()
                         .then(json => resolve(json))
-                        .catch(err => reject({ error: `Cannot parse server response (${response.ok}, ok-catch)` }))
+                        .catch(err => reject({ error: `Cannot parse server response ok-catch)` }))
                 } else {
                     response.json()
                         .then(obj => reject(obj))
-                        .catch(err => reject({ error: `Cannot parse server response (${response.ok}), !ok-catch` }))
+                        .catch(err => reject({ error: `Cannot parse server response !ok-catch` }))
                 }
             })
             .catch(err =>
@@ -24,8 +45,6 @@ function getJSON(httpResponsePromise) {
     });
 }
 
-// When fetching a ticket by ID:
-//      TypeError: tickets.map is not a function
 async function getTickets(tid) {
     return getJSON(tid ?
         fetch(SERVER_URL + `/api/tickets/${tid}`)
@@ -38,7 +57,7 @@ async function getTickets(tid) {
                 title: t.title,
                 author_id: t.author_id,
                 category: t.category,
-                submission_time: dayjs.unix(t.submission_time).format('DD MMMM YYYY, HH:mm:ss'),
+                submission_time: t.state ? timeElapsed(t.submission_time) : '',
                 content: t.content
             }
             return ticket;
@@ -96,6 +115,7 @@ async function getBlocks (tid) {
         fetch(SERVER_URL + `/api/blocks/${tid}`)
         : fetch(SERVER_URL + '/api/blocks')
     ).then(blocks => {
+        console.log(typeof blocks);
         return blocks.map(b => {
             const block = {
                 block_id: b.block_id,
@@ -128,6 +148,20 @@ function deleteBlock(bid) {
     );   
 }
 
+function getUser(uid) {
+    return getJSON(
+        fetch(SERVER_URL + `/api/users/${uid}`)
+    ).then(res => {
+        const user = {
+            id: res.id,
+            admin: res.admin,
+            username: res.username
+        }
+        return user;
+    })
+    .catch(err => { console.log(err) });
+}
+
 async function login(credentials) {
     return getJSON(
         fetch(SERVER_URL + '/api/sessions', {
@@ -147,7 +181,7 @@ async function info() {
     );
 }
 
-async function logout() {
+const logout = async () => {
     return getJSON(
         fetch(SERVER_URL + '/api/sessions/current', {
             method: 'DELETE',
@@ -170,7 +204,9 @@ async function logout() {
 //     content: "proviamo anche il blocco!let's try the block too!"
 // }
 
-// const result = await getTickets(6);
+// const result = await getTickets(1);
+// const result = await getBlocks(3);
+// const result = await getUser(1);
 // console.log(result);
 
 const api = { getTickets, addTicket, openTicket, closeTicket, changeCategory, deleteTicket, getBlocks, addBlock, deleteBlock, login, info, logout }

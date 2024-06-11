@@ -121,7 +121,7 @@ app.get('/api/tickets',
   (req, res) => {
     ticketDao.getAllTickets()
       .then(tickets => {
-        if (req.isAuthenticated()) { res.json(tickets) }
+        if (!req.isAuthenticated()) { res.json(tickets) }
         else {
           tickets.forEach(t => { delete t.content; });
           res.json(tickets);
@@ -154,7 +154,7 @@ app.post('/api/tickets',
     check('state').isBoolean(),
     check('title').isLength({ min: 1, max: maxTitleLength }),
     check('author_id').isInt({ min: 1 }),
-    check('category').isLength({ min: 1, max: 12 }),
+    check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment']),
     check('content').isLength({ min: 10, max: 240 })
   ], async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
@@ -302,6 +302,25 @@ app.delete('/api/blocks/:bid',
 /******************/
 /*** Users APIs ***/
 /******************/
+
+app.get('/api/users/:uid',
+  [check('uid').isInt({ min: 1 })],
+  async (req, res) => {
+    const errors = validationResult(req).formatWith(errorFormatter);
+    if (!errors.isEmpty()) {
+      return res.status(422).json( errors.errors );
+    }
+    try {
+      const result = await userDao.getUser(req.params.uid);
+      if (result.error) {
+        res.status(404).json(result);
+      } else {
+        res.json(result);
+      }
+    } catch (err) {
+      res.status(500).send();
+    }
+});
 
 app.post('/api/sessions',
   function (req, res, next) {

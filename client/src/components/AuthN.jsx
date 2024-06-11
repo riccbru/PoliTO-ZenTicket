@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert, Card, Col, Row, Container } from 'react-bootstrap';
 
 function LoginForm(props) {
+
     const navigate = useNavigate();
+        
     const [errMex, setErrMex] = useState('');
     const [username, setUsername] = useState('enrico_masala');
     const [password, setPassword] = useState('passwd');
@@ -26,7 +28,6 @@ function LoginForm(props) {
     };
 
     return (
-        <Container>
             <Row className='justify-content-center align-items-center' style={{ height: '75vh' }}>
                 <Col xs={12} md={6} lg={4}>
                     <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
@@ -34,7 +35,7 @@ function LoginForm(props) {
                             <h1 className='text-center pb-3' style={{ color: '#fefeff' }}>ZenTicket</h1>
                             <Form onSubmit={handleSubmit}>
                                 {errMex ?
-                                    <Alert dismissible onClose={() => setErrMex('')} variant='danger'></Alert>
+                                    <Alert dismissible onClose={() => setErrMex('')} variant='danger'>{errMex}</Alert>
                                     : null}
                                 <Form.Group className='mb-3'>
                                     <Form.Label>Username</Form.Label>
@@ -45,29 +46,32 @@ function LoginForm(props) {
                                     <Form.Control type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></Form.Control>
                                 </Form.Group>
                                 <div className='d-flex justify-content-center'>
-                                    <Button className='mt-3' type='submit' onClick={() => navigate('/')} style={{color: '#fefeff', backgroundColor: '#012647'}}>LOGIN</Button>
+                                    <Button className='my-button mt-3' type='submit'>LOGIN</Button>
+                                </div>
+                                <p></p>
+                                <div className='d-flex justify-content-center'>
+                                    <Button variant='warning' type='submit'>Proceed unauthenticated</Button>
                                 </div>
                             </Form>
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
-        </Container>
     );
 }
 
 function LoginButton(props) {
+    const navigate = useNavigate();
     return(
-        <Button style={{color: '#fefeff', backgroundColor: '#012647'}} onClick={() => navigate('/login')}>
+        <Button className='my-button mx-2' onClick={() => navigate('/login')}>
             <i class='bi bi-box-arrow-left'></i>
         </Button>
     );
 }
 
 function LogoutButton(props) {
-    const navigate = useNavigate();
     return(
-        <Button variant='info' onClick={props.logout}>
+        <Button className='my-button mx-2' onClick={props.logout}>
             <i class='bi bi-box-arrow-right'></i>
         </Button>
     );

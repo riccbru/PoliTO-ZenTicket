@@ -1,5 +1,5 @@
 body, html, #root {
-  /* background-color: #012647; */
+  /* background-color: #012647 !important; */
   background-color: #002c49 !important;
 }
 
@@ -10,7 +10,33 @@ body, html, #root {
 }
 
 .my-container {
-  
   background-color: #143859;
+}
+
+th {
+  color: #fefeff !important;
+  background-color: #143859 !important;
+}
+
+td {
+  color: #fefeff !important;
+  background-color: #002c49 !important;
+}
+
+.ticket-table {
+  width: 100%;
+  color: #fefeff;
+  table-layout: fixed;
+  background-color: #143859;
+}
+
+.ticket-content {
+  color: #fefeff !important;
+  word-wrap: break-word;
+}
+
+.my-button {
+  color: #fefeff !important;
+  background-color: #002c49 !important;
 }
 

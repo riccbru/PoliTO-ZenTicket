@@ -6,34 +6,28 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { LoginButton, LogoutButton } from './AuthN';
 import { Button, Container, Navbar, Nav, Form } from 'react-bootstrap';
 
-const Navigation = (props) => {
-    const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [loggedIn, setLoggedIn] = useState(false);
+const NavBar = (props) => {
+
     return (
-        <Navbar style={{ color: '#fefeff', backgroundColor: '#143859' }} expand="lg">
-            <Container fluid>
-                <Navbar.Brand style={{ color: '#fefeff' }}>
-                    <i className="bi bi-ticket-detailed"> ZenTicket</i>
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                    <Nav>
-                        {loggedIn ? (
-                            <>
-                                <Nav.Text style={{ color: '#fefeff' }}>{user}</Nav.Text>
-                                <LogoutButton logout={api.logout} />
-                            </>
-                        ) : (
-                            <Button variant="outline-light" onClick={() => navigate('/login')}>
-                                <i className="bi bi-box-arrow-in-left"></i>
-                            </Button>
-                        )}
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
+        <Navbar className="navbar-padding" style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+
+            <Navbar.Brand className="mx-2" style={{ color: '#fefeff' }}>
+                <i className="bi bi-ticket-detailed mx-2" />
+                ZenTicket
+            </Navbar.Brand>
+
+            <Nav>
+                <Navbar.Text className="mx-2 fs-5">
+                    {props.user && props.user.name && `${props.user.name}`}
+                </Navbar.Text>
+                <Form className="mx-2 mt-1">
+                    {props.loggedIn ? <LogoutButton logout={props.logout} /> : <LoginButton />}
+                </Form>
+            </Nav>
+
         </Navbar>
     );
 }
 
-export { Navigation };
+
+export { NavBar };
