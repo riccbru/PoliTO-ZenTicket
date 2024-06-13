@@ -29,10 +29,9 @@ POST http://localhost/api/tickets/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "state": 1,
     "title": "prova",
     "author_id": 1,
-    "category": "inquiry",
+    "category": "administrative",
     "content": "this is a test!\nquesta è una prova!"
 }
 
@@ -51,7 +50,7 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost/api/tickets/22 HTTP/1.1
+DELETE http://localhost/api/tickets/28 HTTP/1.1
 
 ###
 

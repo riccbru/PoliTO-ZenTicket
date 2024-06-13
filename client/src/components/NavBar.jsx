@@ -7,9 +7,8 @@ function NavBar(props) {
     return(
         <Navbar className='my-navbar' >
             <Container fluid>
-                <Navbar.Brand className="mx-3" style={{ color: '#fefeff' }}>
-                    <i className="bi bi-ticket-detailed mx-3" />
-                    ZenTicket
+                <Navbar.Brand href='/' className="mx-3" style={{ color: '#fefeff' }}>
+                    <h1>ZenTicket</h1>
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse className='justify-content-end'>

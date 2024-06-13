@@ -40,6 +40,12 @@ td {
   word-wrap: break-word;
 }
 
+.add-content {
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: break-word !important;
+}
+
 .my-button {
   color: #fefeff !important;
   background-color: #002c49 !important;

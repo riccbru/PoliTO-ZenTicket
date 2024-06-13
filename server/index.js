@@ -154,7 +154,6 @@ app.get('/api/tickets',
 
 app.post('/api/tickets', isLoggedIn,
   [
-    check('state').isBoolean(),
     check('title').isLength({ min: 1, max: maxTitleLength }),
     check('author_id').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment']),

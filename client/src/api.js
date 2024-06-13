@@ -118,7 +118,6 @@ const getBlocks = async (tid) => {
     return getJSON(
         fetch(SERVER_URL + `/api/blocks/${tid}`, { credentials: 'include' })
     ).then(blocks => {
-        console.log(`getBlocks(api.js): is called (author), ${blocks[0].author}`);
         return blocks.map(b => {
             const block = {
                 block_id: b.block_id,

@@ -5,6 +5,7 @@ import { NavBar } from "./NavBar";
 import { LoginForm } from "./Login";
 import { Outlet } from 'react-router-dom';
 import { TicketStats } from "./TicketStats";
+import { TicketAdd } from "./TicketAdd";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 
 import dayjs from "dayjs";
@@ -26,6 +27,16 @@ function TableLayout(props) {
         <Row>
             <Col>
                 <TicketsTable loggedIn={props.loggedIn} tickets={props.tickets} />
+            </Col>
+        </Row>
+    );
+}
+
+function AddLayout(props) {
+    return(
+        <Row>
+            <Col>
+                <TicketAdd addTicket={props.addTicket}/>
             </Col>
         </Row>
     );
@@ -81,8 +92,6 @@ function Common(props) {
             <Row>
                 <Col xs={2}>
                     <TicketStats />
-                    {props.loggedIn ? <><Button className='my-button'>&#43;</Button></> : null}
-                    
                 </Col>
                 <Col xs={10}>
                     <Outlet />
@@ -92,4 +101,4 @@ function Common(props) {
     );
 }
 
-export { Common, Home, TableLayout };
+export { Common, AddLayout, TableLayout };

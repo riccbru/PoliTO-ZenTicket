@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { LoginForm } from './components/Login.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Common, Home, TableLayout } from './components/Layout.jsx';
+import { Common, AddLayout, TableLayout } from './components/Layout.jsx';
 import { Container, Row, Col, Button, Toast } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -19,6 +19,8 @@ function App() {
 }
 
 function AppRouted(props) {
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -61,7 +63,7 @@ function AppRouted(props) {
     setMessage(msg); 
     console.log(err);
 
-    setTimeout( () => setDirty(true), 2000);
+    // setTimeout( () => setDirty(true), 2000);
   }
 
   const handleLogin = async (credentials) => {
@@ -79,20 +81,23 @@ function AppRouted(props) {
     setUser(null);
     setLoggedIn(false);
   }
+
+  function addTicket(ticket) {
+    api.addTicket(ticket)
+      .then(navigate("/"))
+      .catch(e => handleErrors(e));
+  }
   
   return (
     <Container fluid>
       <Routes>
-
-        <Route path="/" element={<Navigate replace to="/login" /> } />
-        <Route path="/login" element={loggedIn ? <Navigate to="/home" /> : <LoginForm login={handleLogin} />} />
-        <Route path="/home" element={<Common loggedIn={loggedIn} user={beautyName(user)} logout={handleLogout} />}>
+        <Route path="/" element={<Common loggedIn={loggedIn} user={beautyName(user)} logout={handleLogout} />}>
           <Route index element={<TableLayout loggedIn={loggedIn}
                         tickets={tickets} setTickets={setTickets}
-                        // blocks={blocks} setBlocks={setBlocks}
                         handleErrors={handleErrors}/>} />
-          {/* <Route index element={<TableLayout />} /> */}
+          <Route path="/add" element={<AddLayout addTicket={addTicket}/>} />
         </Route>
+        <Route path="/login" element={loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />} />
       </Routes>
     </Container>
   );

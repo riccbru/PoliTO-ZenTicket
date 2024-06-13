@@ -14,19 +14,19 @@ function TicketStats(props) {
                     <td className="text-center">
                         <div style={{color: '#6c757d'}}><b>OPEN</b></div>
                     </td>
-                    <td className="text-center"><Badge bg='danger'>5</Badge></td>
+                    <td className="text-center"><Badge bg='danger'>3</Badge></td>
                 </tr>
                 <tr>
                     <td className="text-center">
                         <div style={{color: '#6c757d'}}><b>CLOSED</b></div>
                     </td>
-                    <td className="text-center"><Badge bg='success'>4</Badge></td>
+                    <td className="text-center"><Badge bg='success'>3</Badge></td>
                 </tr>
                 <tr>
                     <td className="text-center">
                         <div style={{color: '#fefeff'}}><b>TOTAL</b></div>
                     </td>
-                    <td className="text-center"><Button disabled className='my-button-info'>9</Button></td>
+                    <td className="text-center"><Button disabled className='my-button-info'>6</Button></td>
                 </tr>
             </tbody>
         </Table>

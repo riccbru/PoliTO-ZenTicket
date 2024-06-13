@@ -45,6 +45,7 @@ function LoginForm(props) {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></Form.Control>
                             </Form.Group>
+
                             <div className='d-flex justify-content-center'>
                                 <Button className='my-button mt-3' type='submit'>LOGIN</Button>
                             </div>
@@ -52,7 +53,7 @@ function LoginForm(props) {
                             <div className='d-flex justify-content-center'>or</div>
                             <p></p>
                             <div className='d-flex justify-content-center'>
-                                <Button variant='warning' type='submit' onClick={() => navigate('/home')}>Proceed unauthenticated</Button>
+                                <Button variant='warning' type='submit' onClick={() => navigate('/')}>Proceed unauthenticated</Button>
                             </div>
 
                         </Form>

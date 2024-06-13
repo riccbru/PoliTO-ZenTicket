@@ -4,8 +4,11 @@ import api from '../api';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, Card, Table } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 function TicketsTable(props) {
+
+    const navigate = useNavigate();
 
     const { tickets, loggedIn } = props;
 
@@ -13,12 +16,13 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
+                    <th className="text-center">{props.loggedIn ? <><Button className='my-button' onClick={() => navigate("/add")}>&#43;</Button></> : null}</th>
                     <th className="text-center">ID</th>
                     <th className="text-center">Status</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Category</th>
-                    <th>Submission</th>
+                    <th className="text-center">Submission</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,7 +84,6 @@ function TicketRow(props) {
         if (loggedIn && show) {
             api.getBlocks(id)
                 .then(blocks => {
-                    console.log(`useEffect(TicketRow):  blocks[0].author_username = ${blocks[0].author_username}`);
                     setBlocks(blocks);
                 })
                 .catch(e => { console.log(e) });
@@ -90,6 +93,7 @@ function TicketRow(props) {
     return(
         <>
             <tr className='clickable-row' onClick={handleClick}>
+                <td></td>
                 <td className="text-center">
                     <Button className='my-button'>{'#' + ticketData.ticket_id}</Button>
                 </td>
@@ -103,17 +107,17 @@ function TicketRow(props) {
                 <td>{beautyCategory(ticketData.category)}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
             </tr>
-            {/* <tr>{ticketData.ticket_id}</tr> */}
-            {show && loggedIn ? <TicketContentRow key={id} loggedIn={loggedIn}
-                    ticket_author={ticketData.ticket_author_username} ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
-                    blocks={blocks} /> : null }
+            {show && loggedIn && <TicketContentRow key={id} loggedIn={loggedIn}
+                    ticket_title={ticketData.title} ticket_author={ticketData.ticket_author_username}
+                    ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
+                    blocks={blocks} /> }
         </>
     );
 }
 
 function TicketContentRow(props) {
 
-    const { ticket_author, ticket_date, ticket_content, blocks } = props;
+    const { ticket_title, ticket_author, ticket_date, ticket_content, blocks } = props;
 
     const beautyAuthor = (author) => {
         const words = author.split('_');
@@ -132,13 +136,14 @@ function TicketContentRow(props) {
             <tr>
                 <td></td>
                 <td colSpan={2}>
-                    <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+                    <Card border='info' style={{ color: '#fefeff', backgroundColor: '#143859' }}>
                         <Card.Body>{ticket_author && beautyAuthor(ticket_author)}</Card.Body>
                         <Card.Body style={{color: '#6c757d'}}>{ticket_date && beautyDate(ticket_date)}</Card.Body>
                     </Card>
                 </td>
-                <td colSpan={3} className='ticket-content'>
-                    <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+                <td colSpan={4} className='ticket-content'>
+                    <Card border='info' style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+                        <Card.Title className='mx-3 mt-3'><b>{ticket_title}</b></Card.Title>
                         <Card.Body>{ticket_content}</Card.Body>
                     </Card>
                 </td>
@@ -170,13 +175,13 @@ function BlockContentRow({ author, date, content }) {
         <>
                 <td></td>
                 <td colSpan={2}>
-                    <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+                    <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
                         <Card.Body>{author && beautyAuthor(author)}</Card.Body>
                         <Card.Body style={{color: '#6c757d'}}>{date && beautyDate(date)}</Card.Body>
                     </Card>
                 </td>
-                <td colSpan={3} className='ticket-content'>
-                    <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
+                <td colSpan={4} className='ticket-content'>
+                    <Card border='dark'  style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
                         <Card.Body>{content}</Card.Body>
                     </Card>
                 </td>

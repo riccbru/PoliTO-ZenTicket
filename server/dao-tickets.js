@@ -94,8 +94,8 @@ exports.deleteTicket = (ticket_id) => {
 
 exports.addTicket = (ticket) => {
     return new Promise((resolve, reject) => {
-        const sql = 'INSERT INTO tickets (state, title, author_id, category, submission_time, content) VALUES (?, ?, ?, ?, ?, ?)';
-        db.run(sql, [ticket.state, ticket.title, ticket.author_id, ticket.category, ticket.submission_time, ticket.content],
+        const sql = 'INSERT INTO tickets (title, author_id, category, submission_time, content) VALUES (?, ?, ?, ?, ?)';
+        db.run(sql, [ticket.title, ticket.author_id, ticket.category, ticket.submission_time, ticket.content],
             function (err) {
                 if (err) { reject(err); }
                 else {
