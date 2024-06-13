@@ -13,8 +13,8 @@ exports.getUser = (uid) => {
             } else {
                 const user = {
                     id: row.user_id,
-                    username: row.username,
                     admin: row.admin,
+                    username: row.username
                 }
                 resolve(user);
             }
@@ -33,8 +33,8 @@ exports.checkUser = (uname, passwd) => {
             } else {
                 const user = {
                     id: row.user_id,
-                    username: row.username,
                     admin: row.admin,
+                    username: row.username
                 }
                 crypto.scrypt(passwd, row.salt, 32, function (err, hash) {
                     if (err) reject(err);

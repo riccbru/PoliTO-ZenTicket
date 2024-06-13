@@ -1,27 +1,32 @@
-import { ListGroup, Table } from "react-bootstrap";
+import { Badge, Button, ListGroup, Table } from "react-bootstrap";
 
 
 function TicketStats(props) {
     return(
-        <Table borderless>
+        <Table bordered hover>
             <thead>
                 <tr>
-                    <th>Analytics</th>
-                    <th></th>
+                    <th colSpan={2} className="text-center">Analytics</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>OPEN</td>
-                    <td>5</td>
+                    <td className="text-center">
+                        <div style={{color: '#6c757d'}}><b>OPEN</b></div>
+                    </td>
+                    <td className="text-center"><Badge bg='danger'>5</Badge></td>
                 </tr>
                 <tr>
-                    <td>CLOSED</td>
-                    <td>4</td>
+                    <td className="text-center">
+                        <div style={{color: '#6c757d'}}><b>CLOSED</b></div>
+                    </td>
+                    <td className="text-center"><Badge bg='success'>4</Badge></td>
                 </tr>
                 <tr>
-                    <td>TOTAL</td>
-                    <td>9</td>
+                    <td className="text-center">
+                        <div style={{color: '#fefeff'}}><b>TOTAL</b></div>
+                    </td>
+                    <td className="text-center"><Button disabled className='my-button-info'>9</Button></td>
                 </tr>
             </tbody>
         </Table>

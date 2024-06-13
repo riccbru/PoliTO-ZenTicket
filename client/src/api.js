@@ -15,11 +15,11 @@ const timeElapsed = (timestamp) => {
     const days = Math.floor(secElapsed / 86400);
 
     if (days > 0) {
-        return `${days}d${hours}h`;
+        return `${days}d ${hours}h`;
     } else if (hours > 0) {
-        return `${hours}h${minutes}m`;
+        return `${hours}h ${minutes}m`;
     } else if (minutes > 0) {
-        return `${minutes}m${seconds}s`;
+        return `${minutes}m ${seconds}s`;
     } else {
         return `${seconds}s`;
     }
@@ -32,7 +32,7 @@ function getJSON(httpResponsePromise) {
                 if (response.ok) {
                     response.json()
                         .then(json => resolve(json))
-                        .catch(err => reject({ error: `Cannot parse server response ok-catch)` }))
+                        .catch(err => reject({ error: `Cannot parse server response ok-catch` }))
                 } else {
                     response.json()
                         .then(obj => reject(obj))
@@ -45,23 +45,22 @@ function getJSON(httpResponsePromise) {
     });
 }
 
-async function getTickets(tid) {
-    return getJSON(tid ?
-        fetch(SERVER_URL + `/api/tickets/${tid}`)
-        : fetch(SERVER_URL + '/api/tickets')
-    ).then(tickets => {
-        return tickets.map(t => {
-            const ticket = {
-                ticket_id: t.ticket_id,
-                state: t.state,
-                title: t.title,
-                author_id: t.author_id,
-                category: t.category,
-                submission_time: t.state ? timeElapsed(t.submission_time) : '',
-                content: t.content
-            }
-            return ticket;
-        })
+const getTickets = async (tid) => {
+    return getJSON(fetch(SERVER_URL + '/api/tickets', {credentials: 'include'}))
+        .then(tickets => {
+            return tickets.map(t => {
+                const ticket = {
+                    ticket_id: t.ticket_id,
+                    state: t.state,
+                    title: t.title,
+                    author_id: t.author_id,
+                    ticket_author_username: t.ticket_author_username,
+                    category: t.category,
+                    submission_time: t.submission_time,
+                    content: t.content
+                }
+                return ticket;
+            })
     })
     .catch((err) => { console.log(err) });
 }
@@ -70,6 +69,7 @@ function addTicket(ticket) {
     return getJSON(
         fetch(SERVER_URL + '/api/tickets', {
             method: 'POST',
+            credentials: 'include',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(ticket)
         })
@@ -79,7 +79,8 @@ function addTicket(ticket) {
 function openTicket(tid) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/open/${tid}`, {
-            method: 'PUT'
+            method: 'PUT',
+            credentials: 'include'
         })
     );
 }
@@ -87,7 +88,8 @@ function openTicket(tid) {
 function closeTicket(tid) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/close/${tid}`, {
-            method: 'PUT'
+            method: 'PUT',
+            credentials: 'include'
         })
     );
 }
@@ -96,6 +98,7 @@ async function changeCategory(tid, newcat) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/${tid}`, {
             method: 'PUT',
+            credentials: 'include',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"category": newcat})
         })
@@ -105,23 +108,24 @@ async function changeCategory(tid, newcat) {
 function deleteTicket(tid) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/${tid}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         })
     );
 }
 
-async function getBlocks (tid) {
-    return getJSON(tid ?
-        fetch(SERVER_URL + `/api/blocks/${tid}`)
-        : fetch(SERVER_URL + '/api/blocks')
+const getBlocks = async (tid) => {
+    return getJSON(
+        fetch(SERVER_URL + `/api/blocks/${tid}`, { credentials: 'include' })
     ).then(blocks => {
-        console.log(typeof blocks);
+        console.log(`getBlocks(api.js): is called (author), ${blocks[0].author}`);
         return blocks.map(b => {
             const block = {
                 block_id: b.block_id,
                 ticket_id: b.ticket_id,
                 author_id: b.author_id,
-                creation_time: dayjs.unix(b.creation_time).format('DD MMMM YYYY, HH:mm:ss'),
+                author_username: b.author,
+                creation_time: b.creation_time,
                 content: b.content
             }
             return block;
@@ -134,6 +138,7 @@ function addBlock(block) {
     return getJSON(
         fetch(SERVER_URL + '/api/blocks', {
             method: 'POST',
+            credentials: 'include',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(block)
         })
@@ -143,14 +148,15 @@ function addBlock(block) {
 function deleteBlock(bid) {
     return getJSON(
         fetch(SERVER_URL + `/api/blocks/${bid}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         })
     );   
 }
 
 function getUser(uid) {
     return getJSON(
-        fetch(SERVER_URL + `/api/users/${uid}`)
+        fetch(SERVER_URL + `/api/users/${uid}`, {credentials: 'include'})
     ).then(res => {
         const user = {
             id: res.id,
@@ -175,9 +181,7 @@ async function login(credentials) {
 
 async function info() {
     return getJSON(
-        fetch(SERVER_URL + '/api/sessions/current', {
-            credentials: 'include'
-        })
+        fetch(SERVER_URL + '/api/sessions/current', { credentials: 'include' })
     );
 }
 
@@ -204,7 +208,7 @@ const logout = async () => {
 //     content: "proviamo anche il blocco!let's try the block too!"
 // }
 
-// const result = await getTickets(1);
+// const result = await getTickets();
 // const result = await getBlocks(3);
 // const result = await getUser(1);
 // console.log(result);

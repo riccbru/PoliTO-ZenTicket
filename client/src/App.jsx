@@ -2,11 +2,13 @@ import './App.css'
 import api from './api.js';
 import { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { LoginForm } from './components/AuthN';
+import { LoginForm } from './components/Login.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { CommonLayout, TableLayout } from './components/Layout.jsx';
+import { Common, Home, TableLayout } from './components/Layout.jsx';
 import { Container, Row, Col, Button, Toast } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { NavBar } from './components/NavBar.jsx';
 
 function App() {
   return (
@@ -18,16 +20,34 @@ function App() {
 
 function AppRouted(props) {
 
-  const navigate = useNavigate();
-
-  const [user, setUser] = useState(false);
-  const [tickets, setTickets] = useState([]);
+  const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [blocks, setBlocks] = useState([]);
+  const [message, setMessage] = useState(null);
 
+  useEffect(()=> {
+    const checkAuth = async() => {
+      try {
+        const user = await api.info();
+        setLoggedIn(true);
+        setUser(user);
+      } catch(err) { }
+    };
+    checkAuth();
+  }, []);
 
+  const beautyName = (username) => {
+    if (username) {
+      const uname = username.username;
+      const words = uname.split('_');
+      const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+      const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
+      return `${name} ${surname}`;
+    } else { return null; }
+}
 
   const handleErrors = (err) => {
-    //console.log('DEBUG: err: '+JSON.stringify(err));
     let msg = '';
     if (err.error)
       msg = err.error;
@@ -38,7 +58,7 @@ function AppRouted(props) {
       msg = err[0].msg + " : " + err[0].path;
     else if (typeof err === "string") msg = String(err);
     else msg = "Unknown Error";
-    setMessage(msg); // WARNING: a more complex application requires a queue of messages. In this example only the last error is shown.
+    setMessage(msg); 
     console.log(err);
 
     setTimeout( () => setDirty(true), 2000);
@@ -56,15 +76,23 @@ function AppRouted(props) {
 
   const handleLogout = async () => {
     await api.logout();
-    setLoggedIn(false);
     setUser(null);
+    setLoggedIn(false);
   }
   
   return (
     <Container fluid>
       <Routes>
-        <Route index element={<CommonLayout loggedIn={true} tickets={tickets} user={user} setTickets={setTickets} handleErrors={handleErrors} logout={handleLogout}/>} />
-        {/* <Route path="/login" element={!loggedIn ? <LoginForm login={handleLogin}></LoginForm> : <Navigate replace to='/'></Navigate>}></Route> */}
+
+        <Route path="/" element={<Navigate replace to="/login" /> } />
+        <Route path="/login" element={loggedIn ? <Navigate to="/home" /> : <LoginForm login={handleLogin} />} />
+        <Route path="/home" element={<Common loggedIn={loggedIn} user={beautyName(user)} logout={handleLogout} />}>
+          <Route index element={<TableLayout loggedIn={loggedIn}
+                        tickets={tickets} setTickets={setTickets}
+                        // blocks={blocks} setBlocks={setBlocks}
+                        handleErrors={handleErrors}/>} />
+          {/* <Route index element={<TableLayout />} /> */}
+        </Route>
       </Routes>
     </Container>
   );

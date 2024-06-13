@@ -119,37 +119,40 @@ app.get('/api',
 
 app.get('/api/tickets',
   (req, res) => {
-    ticketDao.getAllTickets()
+    ticketDao.getTickets()
       .then(tickets => {
-        if (!req.isAuthenticated()) { res.json(tickets) }
-        else {
-          tickets.forEach(t => { delete t.content; });
-          res.json(tickets);
-        }
+        console.log(`index(getTickets): req.isAuthenticated = ${req.isAuthenticated()}`);
+        // if (req.isAuthenticated()) {
+        //   res.json(tickets)
+        // } else {
+        //   const allowed = tickets.map(({ content, ...rest }) => rest);
+        //   res.json(allowed);
+        // }
+        res.json(tickets);
       })
       .catch((err) => res.status(500).json(err));
-  });
-
-app.get('/api/tickets/:tid',
-  [check('tid').isInt({ min: 1 })],
-  async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(errors.errors);
-    }
-    try {
-      const result = await ticketDao.getTicket(req.params.tid);
-      if (result.error) { res.status(404).json(result); }
-      if (!req.isAuthenticated()) {
-        delete result.content;
-      }
-      res.json(result);
-    } catch (err) {
-      res.status(500).send();
-    }
 });
 
-app.post('/api/tickets',
+// app.get('/api/tickets/:tid',
+//   [check('tid').isInt({ min: 1 })],
+//   async (req, res) => {
+//     const errors = validationResult(req).formatWith(errorFormatter);
+//     if (!errors.isEmpty()) {
+//       return res.status(422).json(errors.errors);
+//     }
+//     try {
+//       const result = await ticketDao.getTickets(req.params.tid);
+//       if (result.error) { res.status(404).json(result); }
+//       if (!req.isAuthenticated()) {
+//         delete result.content;
+//       }
+//       res.json(result);
+//     } catch (err) {
+//       res.status(500).send({error: err});
+//     }
+// });
+
+app.post('/api/tickets', isLoggedIn,
   [
     check('state').isBoolean(),
     check('title').isLength({ min: 1, max: maxTitleLength }),
@@ -177,7 +180,7 @@ app.post('/api/tickets',
     }
 });
 
-app.put('/api/tickets/open/:tid',
+app.put('/api/tickets/open/:tid', isLoggedIn,
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
@@ -195,7 +198,7 @@ app.put('/api/tickets/open/:tid',
     }
 });
 
-app.put('/api/tickets/close/:tid',
+app.put('/api/tickets/close/:tid', isLoggedIn,
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
 
@@ -214,7 +217,7 @@ app.put('/api/tickets/close/:tid',
     }
 });
 
-app.put('/api/tickets/:tid',
+app.put('/api/tickets/:tid', isLoggedIn,
   [
     check('tid').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'])
@@ -227,7 +230,7 @@ app.put('/api/tickets/:tid',
     }
 });
 
-app.delete('/api/tickets/:tid',
+app.delete('/api/tickets/:tid', 
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
     try {
@@ -238,15 +241,22 @@ app.delete('/api/tickets/:tid',
     }
 });
 
-app.get('/api/blocks',
-  (req, res) => {
-    ticketDao.getAllBlocks()
-      .then(blocks => res.json(blocks))
-      .catch((err) => res.status(500).json(err))
-  }
-);
+// app.get('/api/blocks',
+//   (req, res) => {
+//     ticketDao.getBlocks()
+//       .then(blocks => {
+//         console.log(`index(getBlocks): req.isAuthenticated = ${req.isAuthenticated()}`);
+//         if (req.isAuthenticated()) {
+//           res.json(blocks);
+//         } else {
+//           res.json([]);
+//         }
+//       })
+//       .catch((err) => res.status(500).json(err))
+//   }
+// );
 
-app.get('/api/blocks/:tid',
+app.get('/api/blocks/:tid', isLoggedIn,
 [check('tid').isInt({min: 1})],
   async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
@@ -257,8 +267,12 @@ app.get('/api/blocks/:tid',
       const result = await ticketDao.getBlocks(req.params.tid);
       if (result.error)
         res.status(404).json(result);
-      else
-        res.json(result);
+      else {
+        // if (req.isAuthenticated()) {
+          res.json(result);
+        // } else { res.status(401).json({error: 'Not authorized'}) }
+      }
+        // res.json(result);
     } catch (err) {
       res.status(500).send();
     }
@@ -327,14 +341,14 @@ app.post('/api/sessions',
     passport.authenticate('local', (err, user, info) => {
       if (err)
         return next(err);
-        if (!user) {
-          return res.status(401).json({error: info});
-        }
-        req.login(user, (err) => {
-          if (err)
-            return next(err);
-          return res.json(req.user);
-        });
+      if (!user) {
+        return res.status(401).json({ error: info });
+      }
+      req.login(user, (err) => {
+        if (err)
+          return next(err);
+        return res.json(req.user);
+      });
     })(req, res, next);
 });
 
@@ -343,7 +357,7 @@ app.get('/api/sessions/current',
     if (req.isAuthenticated()) {
       res.status(200).json(req.user);
     } else {
-      res.status(401).json({ error: 'No active session' });
+      res.status(401).json({ info: 'No active session' });
     }
 });
 

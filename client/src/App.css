@@ -9,6 +9,10 @@ body, html, #root {
   background-color: #143859 !important;
 }
 
+.my-icon {
+  font-size: 2rem;
+}
+
 .my-container {
   background-color: #143859;
 }
@@ -22,6 +26,7 @@ td {
   color: #fefeff !important;
   background-color: #002c49 !important;
 }
+
 
 .ticket-table {
   width: 100%;
@@ -39,4 +44,21 @@ td {
   color: #fefeff !important;
   background-color: #002c49 !important;
 }
+
+.my-badge {
+  color: #fefeff !important;
+  background-color: #002c49 !important;
+}
+
+.my-card {
+  color: #fefeff;
+  background-color: #143859;
+}
+
+.my-button-info {
+  color: #fefeff !important;
+  background-color: #808080 !important;
+}
+
+
 
