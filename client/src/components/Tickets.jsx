@@ -3,14 +3,14 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import api from '../api';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Table } from 'react-bootstrap';
+import { Badge, Button, Card, Form, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 function TicketsTable(props) {
 
     const navigate = useNavigate();
 
-    const { tickets, loggedIn } = props;
+    const { admin, tickets, loggedIn } = props;
 
     return(
         <Table borderless className='ticket-table' hover>
@@ -26,15 +26,17 @@ function TicketsTable(props) {
                 </tr>
             </thead>
             <tbody>
-                {tickets.map(ticket => <TicketRow loggedIn={loggedIn} key={ticket.ticket_id} ticketData={ticket} />)}
+                {tickets.map(ticket => <TicketRow uid={props.uid} admin={props.admin} user={props.user} loggedIn={loggedIn} key={ticket.ticket_id} ticketData={ticket} addBlock={props.addBlock}/>)}
             </tbody>
         </Table>
     );
 }
 
 function TicketRow(props) {
-    const {loggedIn, ticketData} = props;
+    const navigate = useNavigate();
+    const {uid, admin, loggedIn, ticketData} = props;
     const [id] = useState(ticketData.ticket_id);
+    const [status, setStatus] = useState(ticketData.state);
     const[blocks, setBlocks] = useState([]);
     const [show, setShow] = useState(false);
 
@@ -80,6 +82,20 @@ function TicketRow(props) {
         setShow(!show);
     }
 
+    const changeState = (event) => {
+        event.stopPropagation();
+        if (status) {
+            api.closeTicket(id)
+                .then(result => { setStatus(result[0].state); })
+                .catch();
+
+        } else {
+            api.openTicket(id)
+                .then(result => { setStatus(result[0].state); })
+                .catch();
+        }
+    }
+
     useEffect(() => {
         if (loggedIn && show) {
             api.getBlocks(id)
@@ -93,12 +109,12 @@ function TicketRow(props) {
     return(
         <>
             <tr className='clickable-row' onClick={handleClick}>
-                <td></td>
+                <td className="text-center">{(admin || (ticketData.author_id === uid && status)) ? <Button variant='warning' style={{color: '#fefeff'}} onClick={changeState}>{status ? <b>CLOSE</b> : <b>OPEN</b>}</Button> : null}</td>
                 <td className="text-center">
-                    <Button className='my-button'>{'#' + ticketData.ticket_id}</Button>
+                    <Button className='my-button'>{'#' + id}</Button>
                 </td>
                 <td className="text-center">
-                    {ticketData.state ?
+                    {status ?
                     <Badge bg="danger">OPEN</Badge>
                     : <Badge bg="success">CLOSED</Badge>}
                 </td>
@@ -107,17 +123,18 @@ function TicketRow(props) {
                 <td>{beautyCategory(ticketData.category)}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
             </tr>
-            {show && loggedIn && <TicketContentRow key={id} loggedIn={loggedIn}
+            {show && loggedIn && <TicketContentRow uid={uid} tid={id} status={status} loggedIn={loggedIn}
                     ticket_title={ticketData.title} ticket_author={ticketData.ticket_author_username}
                     ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
-                    blocks={blocks} /> }
+                    blocks={blocks} addBlock={props.addBlock}/> }
         </>
     );
 }
 
 function TicketContentRow(props) {
 
-    const { ticket_title, ticket_author, ticket_date, ticket_content, blocks } = props;
+    const { uid, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks } = props;
+    const [newblockcontent, setNewBlockContent] = useState(null);
 
     const beautyAuthor = (author) => {
         const words = author.split('_');
@@ -129,6 +146,20 @@ function TicketContentRow(props) {
     const beautyDate = (date) => {
         const sub_date = dayjs.unix(date).format('on D MMMM YYYY [at] HH:mm:ss');
         return sub_date;
+    }
+
+    const handleClick = (event) => {
+        event.preventDefault();
+        console.log('works!');
+        console.log(`TICKET_ID (key) = ${tid}`);
+        const block = {
+            "ticket_id": tid,
+            "author_id": uid,
+            "content": newblockcontent
+        }
+        props.addBlock(block);
+        console.log(block);
+
     }
 
     return(
@@ -153,6 +184,22 @@ function TicketContentRow(props) {
                         <BlockContentRow author={block.author_username} date={block.creation_time} content={block.content} />
                 </tr>
             ))}
+            {!status ? null
+                : <tr>
+                    <td></td>
+                    <td colspan={6}>
+                        <Form>
+                            <Form.Group>
+                                <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => setNewBlockContent(e.target.value)} />
+                            </Form.Group>
+                            <Form.Group>
+                                <div className='text-end'>
+                                    <Button className='my-button' onClick={handleClick}>POST</Button>
+                                </div>
+                            </Form.Group>
+                        </Form>
+                    </td>
+                </tr>}
         </>
     );
 }
@@ -181,7 +228,7 @@ function BlockContentRow({ author, date, content }) {
                     </Card>
                 </td>
                 <td colSpan={4} className='ticket-content'>
-                    <Card border='dark'  style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
+                    <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
                         <Card.Body>{content}</Card.Body>
                     </Card>
                 </td>

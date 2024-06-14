@@ -4,6 +4,16 @@ import { Button, Container, Navbar } from 'react-bootstrap';
 
 
 function NavBar(props) {
+
+    const beautyName = (uname) => {
+        if (uname) {
+          const words = uname.split('_');
+          const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+          const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
+          return `${name} ${surname}`;
+        } else { return null; }
+    }
+
     return(
         <Navbar className='my-navbar' >
             <Container fluid>
@@ -12,7 +22,8 @@ function NavBar(props) {
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse className='justify-content-end'>
-                    <Navbar.Text className={'mx-1'} style={{color: '#808080', fontSize: '20px'}}>{props.loggedIn ? props.user : null}</Navbar.Text>
+                    {props.admin ? <Navbar.Text className={'mx-1'} style={{color: '#ffc108', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>
+                    : <Navbar.Text className={'mx-1'} style={{color: '#808080', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>}
                     {props.loggedIn ? <i class='bi bi-person-fill my-icon mx-3'></i> : <i class='bi bi-person my-icon mx-3'></i>}
                     {!props.loggedIn ? <LoginButton /> : <LogoutButton logout={props.logout} />}
                 </Navbar.Collapse>

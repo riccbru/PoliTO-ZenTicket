@@ -22,7 +22,9 @@ function AppRouted(props) {
 
   const navigate = useNavigate();
 
+  const [uid, setUID] = useState(null);
   const [user, setUser] = useState(null);
+  const [admin, setAdmin] = useState(0);
   const [loggedIn, setLoggedIn] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [blocks, setBlocks] = useState([]);
@@ -33,21 +35,14 @@ function AppRouted(props) {
       try {
         const user = await api.info();
         setLoggedIn(true);
-        setUser(user);
+        setUID(user.id);
+        setAdmin(user.admin);
+        setUser(user.username);
       } catch(err) { }
     };
     checkAuth();
   }, []);
 
-  const beautyName = (username) => {
-    if (username) {
-      const uname = username.username;
-      const words = uname.split('_');
-      const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-      const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
-      return `${name} ${surname}`;
-    } else { return null; }
-}
 
   const handleErrors = (err) => {
     let msg = '';
@@ -69,8 +64,10 @@ function AppRouted(props) {
   const handleLogin = async (credentials) => {
     try {
       const user = await api.login(credentials);
-      setUser(user);
       setLoggedIn(true);
+      setUID(user.id);
+      setAdmin(user.admin);
+      setUser(user.username);
     } catch(err) {
       throw err;
     }
@@ -80,6 +77,8 @@ function AppRouted(props) {
     await api.logout();
     setUser(null);
     setLoggedIn(false);
+    setUID(null);
+    setAdmin(0);
   }
 
   function addTicket(ticket) {
@@ -87,15 +86,22 @@ function AppRouted(props) {
       .then(navigate("/"))
       .catch(e => handleErrors(e));
   }
+
+  function addBlock(block) {
+    api.addBlock(block)
+      .then(navigate("/"))
+      .catch(e => handleErrors(e));
+  }
+
   
   return (
     <Container fluid>
       <Routes>
-        <Route path="/" element={<Common loggedIn={loggedIn} user={beautyName(user)} logout={handleLogout} />}>
-          <Route index element={<TableLayout loggedIn={loggedIn}
-                        tickets={tickets} setTickets={setTickets}
+        <Route path="/" element={<Common uid={uid} loggedIn={loggedIn} admin={admin} user={user} logout={handleLogout} />}>
+          <Route index element={<TableLayout uid={uid} admin={admin} user={user} loggedIn={loggedIn}
+                        tickets={tickets} setTickets={setTickets} addBlock={addBlock}
                         handleErrors={handleErrors}/>} />
-          <Route path="/add" element={<AddLayout addTicket={addTicket}/>} />
+          <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket}/> : <Navigate to="/login" />} />
         </Route>
         <Route path="/login" element={loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />} />
       </Routes>

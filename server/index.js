@@ -122,35 +122,37 @@ app.get('/api/tickets',
     ticketDao.getTickets()
       .then(tickets => {
         console.log(`index(getTickets): req.isAuthenticated = ${req.isAuthenticated()}`);
-        // if (req.isAuthenticated()) {
-        //   res.json(tickets)
-        // } else {
-        //   const allowed = tickets.map(({ content, ...rest }) => rest);
-        //   res.json(allowed);
-        // }
-        res.json(tickets);
+        if (req.isAuthenticated()) {
+          res.json(tickets)
+        } else {
+          const allowed = tickets.map(({ content, ...rest }) => rest);
+          res.json(allowed);
+        }
+        // res.json(tickets);
       })
       .catch((err) => res.status(500).json(err));
 });
 
-// app.get('/api/tickets/:tid',
-//   [check('tid').isInt({ min: 1 })],
-//   async (req, res) => {
-//     const errors = validationResult(req).formatWith(errorFormatter);
-//     if (!errors.isEmpty()) {
-//       return res.status(422).json(errors.errors);
-//     }
-//     try {
-//       const result = await ticketDao.getTickets(req.params.tid);
-//       if (result.error) { res.status(404).json(result); }
-//       if (!req.isAuthenticated()) {
-//         delete result.content;
-//       }
-//       res.json(result);
-//     } catch (err) {
-//       res.status(500).send({error: err});
-//     }
-// });
+app.get('/api/tickets/:tid',
+  [check('tid').isInt({ min: 1 })],
+  async (req, res) => {
+    const errors = validationResult(req).formatWith(errorFormatter);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.errors);
+    }
+    try {
+      const result = await ticketDao.getTickets(req.params.tid);
+      if (result.error) { res.status(404).json(result); }
+      if (!req.isAuthenticated()) {
+        const allowed = result.map(({ content, ...rest }) => rest);
+        res.json(allowed);
+      } else {
+        res.json(result);
+      }
+    } catch (err) {
+      res.status(500).send({error: err});
+    }
+});
 
 app.post('/api/tickets', isLoggedIn,
   [
@@ -186,14 +188,18 @@ app.put('/api/tickets/open/:tid', isLoggedIn,
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.errors);
     }
-    try {
-      const result = await ticketDao.openTicket(req.params.tid);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).send();
+    if (req.user.admin) {
+      try {
+        const result = await ticketDao.openTicket(req.params.tid);
+        if (result.error)
+          res.status(404).json(result);
+        else
+          res.json(result);
+      } catch (err) {
+        res.status(500).send();
+      }
+    } else {
+      res.status(403).json({error: "Forbidden"});
     }
 });
 
@@ -205,15 +211,18 @@ app.put('/api/tickets/close/:tid', isLoggedIn,
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.errors);
     }
-    try {
-      const result = await ticketDao.closeTicket(req.params.tid);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).send();
-    }
+    ticketDao.getTickets(req.params.tid)
+      .then(tickets => {
+        const authorID = tickets[0].author_id;
+        if (req.user.admin || req.user.id === authorID) {
+          ticketDao.closeTicket(req.params.tid)
+            .then(result => {res.json(result)})
+            .catch((err) => res.status(500).json(err));
+        } else {
+          res.status(401).json({ error: "Unauthorized" });
+        }
+      })
+      .catch((err) => res.status(500).json(err));
 });
 
 app.put('/api/tickets/:tid', isLoggedIn,

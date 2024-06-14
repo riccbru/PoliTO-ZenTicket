@@ -26,7 +26,7 @@ function TableLayout(props) {
     return(
         <Row>
             <Col>
-                <TicketsTable loggedIn={props.loggedIn} tickets={props.tickets} />
+                <TicketsTable uid={props.uid} admin={props.admin} user={props.user} loggedIn={props.loggedIn} tickets={props.tickets} addBlock={props.addBlock}/>
             </Col>
         </Row>
     );
@@ -36,49 +36,9 @@ function AddLayout(props) {
     return(
         <Row>
             <Col>
-                <TicketAdd addTicket={props.addTicket}/>
+                <TicketAdd uid={props.uid} user={props.user} addTicket={props.addTicket}/>
             </Col>
         </Row>
-    );
-}
-
-function Home(props) {
-
-    const [tickets, setTickets] = useState([])
-    const [loggedIn, setLoggedIn] = useState(false);
-    
-    useEffect(() => {
-        console.log(`Home(useEffect)-1: loggedIn = ${props.loggedIn}`);
-        console.log(`Home(useEffect)-1: tickets = ${props.tickets}`);
-        props.setTickets([]);
-        if (props.tickets) {
-            api.getTickets()
-            .then(tickets => {
-                props.setTickets(tickets);
-            })
-            .catch(e => { props.handleErrors(e); });
-        }
-        console.log(`Home(useEffect)-2: loggedIn = ${props.loggedIn}`);
-        console.log(`Home(useEffect)-2: tickets = ${props.tickets}`);
-    }, [props.loggedIn]);
-
-    return (
-        <>
-            <Row>
-                <Col>
-                    <NavBar user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
-                </Col>
-            </Row>
-            <p></p>
-            <Row>
-                <Col xs={3}>
-                    <TicketStats></TicketStats>
-                </Col>
-                <Col xs={9}>
-                    <TableLayout loggedIn={props.loggedIn} tickets={props.tickets} />
-                </Col>
-            </Row>
-        </>
     );
 }
 
@@ -86,7 +46,7 @@ function Common(props) {
     return(
         <>
             <Row>
-                <Col><NavBar loggedIn={props.loggedIn} user={props.user} logout={props.logout}></NavBar></Col>
+                <Col><NavBar loggedIn={props.loggedIn} uid={props.uid} admin={props.admin} user={props.user} logout={props.logout}></NavBar></Col>
             </Row>
             <p></p>
             <Row>
@@ -102,3 +62,43 @@ function Common(props) {
 }
 
 export { Common, AddLayout, TableLayout };
+
+// function Home(props) {
+
+//     const [tickets, setTickets] = useState([])
+//     const [loggedIn, setLoggedIn] = useState(false);
+    
+//     useEffect(() => {
+//         console.log(`Home(useEffect)-1: loggedIn = ${props.loggedIn}`);
+//         console.log(`Home(useEffect)-1: tickets = ${props.tickets}`);
+//         props.setTickets([]);
+//         if (props.tickets) {
+//             api.getTickets()
+//             .then(tickets => {
+//                 props.setTickets(tickets);
+//             })
+//             .catch(e => { props.handleErrors(e); });
+//         }
+//         console.log(`Home(useEffect)-2: loggedIn = ${props.loggedIn}`);
+//         console.log(`Home(useEffect)-2: tickets = ${props.tickets}`);
+//     }, [props.loggedIn]);
+
+//     return (
+//         <>
+//             <Row>
+//                 <Col>
+//                     <NavBar user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
+//                 </Col>
+//             </Row>
+//             <p></p>
+//             <Row>
+//                 <Col xs={3}>
+//                     <TicketStats></TicketStats>
+//                 </Col>
+//                 <Col xs={9}>
+//                     <TableLayout loggedIn={props.loggedIn} tickets={props.tickets} />
+//                 </Col>
+//             </Row>
+//         </>
+//     );
+// }

@@ -7,11 +7,21 @@ function TicketAdd(props) {
 
     const navigate = useNavigate();
 
+    const [uid, setUID] = useState(props.uid);
     const [title, setTitle] = useState('');
     const [errMex, setErrMex] = useState('');
     const [modal, setModal] = useState(false);
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
+
+    const beautyName = (uname) => {
+        if (uname) {
+          const words = uname.split('_');
+          const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+          const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
+          return `${name} ${surname}`;
+        } else { return null; }
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -34,15 +44,14 @@ function TicketAdd(props) {
 
     const handleConfirm = () => {
         const ticket = {
-            "author_id": 1,
+            "author_id": uid,
             "title": title,
             "category": category,
             "content": content,
-            "timestamp": dayjs().unix(),
         }
         props.addTicket(ticket);
         console.log(ticket);
-        navigate("/");
+        // navigate("/");
     }
 
     const handleCancel = () => {
@@ -101,7 +110,7 @@ function TicketAdd(props) {
                     </Table>
                     <Table borderless>
                         <thead><tr><th>From user:</th></tr></thead>
-                        <tbody><tr><td>{'antonio_lioy'}</td></tr></tbody>
+                        <tbody><tr><td>{beautyName(props.user)}</td></tr></tbody>
                     </Table>
                     
                 </Modal.Body>

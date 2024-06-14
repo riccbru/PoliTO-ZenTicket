@@ -53,7 +53,7 @@ function LoginForm(props) {
                             <div className='d-flex justify-content-center'>or</div>
                             <p></p>
                             <div className='d-flex justify-content-center'>
-                                <Button variant='warning' type='submit' onClick={() => navigate('/')}>Proceed unauthenticated</Button>
+                                <Button style={{ color: '#fefeff', backgroundColor: '#ffc108' }} type='submit' onClick={() => navigate('/')}>Proceed unauthenticated</Button>
                             </div>
 
                         </Form>

@@ -33,12 +33,21 @@ const returnBlock = (block) => {
 
 exports.getTickets = (ticket_id) => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT tickets.*, ticket_author.username AS ticket_author_username FROM tickets LEFT JOIN users AS ticket_author ON tickets.author_id = ticket_author.user_id ORDER BY tickets.submission_time DESC';
-        db.all(sql, (err, rows) => {
-            if (err) reject(err);
-            const tickets = rows.map(t => returnTicket(t));
-            resolve(tickets);
-        });
+        if (!ticket_id) {
+            const sql = 'SELECT tickets.*, ticket_author.username AS ticket_author_username FROM tickets LEFT JOIN users AS ticket_author ON tickets.author_id = ticket_author.user_id ORDER BY tickets.submission_time DESC';
+            db.all(sql, (err, rows) => {
+                if (err) reject(err);
+                const tickets = rows.map(t => returnTicket(t));
+                resolve(tickets);
+            });
+        } else {
+            const sql = 'SELECT tickets.*, ticket_author.username AS ticket_author_username FROM tickets LEFT JOIN users AS ticket_author ON tickets.author_id = ticket_author.user_id WHERE tickets.ticket_id = ? ORDER BY tickets.submission_time DESC';
+            db.all(sql, [ticket_id], (err, rows) => {
+                if (err) reject(err);
+                const tickets = rows.map(t => returnTicket(t));
+                resolve(tickets);
+            });
+        }
     });
 }
 
@@ -48,7 +57,7 @@ exports.openTicket = (ticket_id) => {
         db.run(sql, [ticket_id], function (err) {
             if (err) { reject(err); }
             else {
-                resolve(exports.getTicket(ticket_id));
+                resolve(exports.getTickets(ticket_id));
             }
         });
     });
@@ -60,7 +69,7 @@ exports.closeTicket = (ticket_id) => {
         db.run(sql, [ticket_id], function (err) {
             if (err) { reject(err); }
             else {
-                resolve(exports.getTicket(ticket_id));
+                resolve(exports.getTickets(ticket_id));
             }
         });
     });
@@ -73,7 +82,7 @@ exports.changeCategory = (new_cat, ticket_id) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(exports.getTicket(ticket_id));
+                resolve(exports.getTickets());
             }
         });
     });
