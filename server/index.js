@@ -230,11 +230,15 @@ app.put('/api/tickets/:tid', isLoggedIn,
     check('tid').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'])
   ], async (req, res) => {
-    const result = await ticketDao.changeCategory(req.body.category, req.params.tid);
-    if (result.error) {
-      return res.status(404).json(result.error);
+    if (req.user.admin) {
+      const result = await ticketDao.changeCategory(req.body.category, req.params.tid);
+      if (result.error) {
+        return res.status(404).json(result.error);
+      } else {
+        return res.json(result);
+      }
     } else {
-      return res.json(result);
+      res.status(403).json({error: "Forbidden"});
     }
 });
 

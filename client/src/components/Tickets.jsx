@@ -2,9 +2,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import api from '../api';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Card, Form, Table } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 
 function TicketsTable(props) {
 
@@ -23,11 +23,12 @@ function TicketsTable(props) {
                     <th>Author</th>
                     <th>Category</th>
                     <th className="text-center">Submission</th>
+                    <th>ETA</th>
                 </tr>
             </thead>
             <tbody>
                 {tickets.map(ticket => <TicketRow loggedIn={loggedIn}
-                            uid={props.uid} admin={props.admin} user={props.user}
+                            uid={props.uid} admin={admin} user={props.user}
                             key={ticket.ticket_id} ticketData={ticket} addBlock={props.addBlock}
                             update={props.update} setUpdate={props.setUpdate}/>)}
             </tbody>
@@ -36,7 +37,7 @@ function TicketsTable(props) {
 }
 
 function TicketRow(props) {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const {loggedIn, uid, admin, user, ticketData, update, setUpdate} = props;
     const [id] = useState(ticketData.ticket_id);
     const [status, setStatus] = useState(ticketData.state);
@@ -128,8 +129,9 @@ function TicketRow(props) {
                 </td>
                 <td><b>{ticketData.title}</b></td>
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
-                <td>{beautyCategory(ticketData.category)}</td>
+                <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
+                <td>TODO estimation</td>
             </tr>
             {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
                     key={ticketData.ticket_id}
@@ -138,6 +140,31 @@ function TicketRow(props) {
                     blocks={blocks} addBlock={props.addBlock}
                     update={update} setUpdate={setUpdate}/> }
         </>
+    );
+}
+
+function CategoryDropdown({tid, category}) {
+    const [currentCategory, setCurrentCategory] = useState(category);
+
+    useEffect(() => {
+        setCurrentCategory(category);
+      }, [currentCategory]);
+
+    const handleChange = (event) => {
+        event.preventDefault();
+        const newCategory = event.target.value;
+        api.changeCategory(tid, newCategory)
+            .then(() => {
+                setCurrentCategory(newCategory);
+            })
+            .catch(err => console.log(err));
+    }
+
+    return(
+        <Form.Select style={{width: '180px'}} className='my-button' title={currentCategory} onChange={handleChange}>
+            <option value={currentCategory}>{currentCategory.toUpperCase()}</option>
+            {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map(cat => <option value={cat}>{cat.toUpperCase()}</option>)}
+        </Form.Select>
     );
 }
 
@@ -163,6 +190,7 @@ function TicketContentRow(props) {
 
     useEffect(() => {
         setUpdate(true);
+        
     }, []);
 
     const handleSubmit = (event) => {
@@ -194,6 +222,7 @@ function TicketContentRow(props) {
                         <Card.Body>{ticket_content}</Card.Body>
                     </Card>
                 </td>
+                <td></td>
             </tr>
             {blocks.map((block, index) => (
                 <tr key={index}>
@@ -216,8 +245,8 @@ function TicketContentRow(props) {
                         </Form.Group>
                     </Form>
                 </td>
-
-                </tr >
+                <td></td>
+                </tr>
                 }
         </>
     );
@@ -251,6 +280,7 @@ function BlockContentRow({ author, date, content }) {
                         <Card.Body>{content}</Card.Body>
                     </Card>
                 </td>
+                <td></td>
         </>
     );
 }

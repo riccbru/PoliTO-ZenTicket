@@ -18,7 +18,8 @@ function NavBar(props) {
         <Navbar className='my-navbar' >
             <Container fluid>
                 <Navbar.Brand href='/' className="mx-3" style={{ color: '#fefeff' }}>
-                    <h1>ZenTicket</h1>
+                    <img alt='' src='../brand.png' width='45' height='45' className='mx-3'/>
+                    <span style={{display: 'inline-block', verticalAlign: 'middle'}}><h1>ZenTicket</h1></span>
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse className='justify-content-end'>
