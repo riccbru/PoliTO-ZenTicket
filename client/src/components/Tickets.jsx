@@ -203,19 +203,22 @@ function TicketContentRow(props) {
             {(!status || (user === ticket_author && blocks.length === 0)) ? null
                 : <tr>
                     <td></td>
-                    <td colspan={6}>
+
+                    <td colSpan={6}>
                         <Form ref={formRef} onSubmit={handleSubmit}>
                             <Form.Group>
                                 <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => setNewBlockContent(e.target.value)} />
                             </Form.Group>
-                            <Form.Group>
-                                <div className='text-end'>
-                                    <Button type='submit' className='my-button'>POST</Button>
-                                </div>
-                            </Form.Group>
-                        </Form>
-                    </td>
-                </tr>}
+                        <Form.Group>
+                            <div className='text-center mx-3 mt-3'>
+                                <Button type='submit' className='my-button'>POST</Button>
+                            </div>
+                        </Form.Group>
+                    </Form>
+                </td>
+
+                </tr >
+                }
         </>
     );
 }
