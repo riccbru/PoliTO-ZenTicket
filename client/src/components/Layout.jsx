@@ -26,7 +26,10 @@ function TableLayout(props) {
     return(
         <Row>
             <Col>
-                <TicketsTable uid={props.uid} admin={props.admin} user={props.user} loggedIn={props.loggedIn} tickets={props.tickets} addBlock={props.addBlock}/>
+                <TicketsTable loggedIn={props.loggedIn}
+                        uid={props.uid} admin={props.admin} user={props.user}
+                        tickets={props.tickets} addBlock={props.addBlock}
+                        update={props.update} setUpdate={props.setUpdate}/>
             </Col>
         </Row>
     );

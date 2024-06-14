@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import api from '../api';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Card, Form, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
-                    <th className="text-center">{props.loggedIn ? <><Button className='my-button' onClick={() => navigate("/add")}>&#43;</Button></> : null}</th>
+                    <th className="text-center"><Button className='my-button' onClick={() => {if (loggedIn) {navigate("/add")} else {navigate("/login")}}}>&#43;</Button></th>
                     <th className="text-center">ID</th>
                     <th className="text-center">Status</th>
                     <th>Title</th>
@@ -26,7 +26,10 @@ function TicketsTable(props) {
                 </tr>
             </thead>
             <tbody>
-                {tickets.map(ticket => <TicketRow uid={props.uid} admin={props.admin} user={props.user} loggedIn={loggedIn} key={ticket.ticket_id} ticketData={ticket} addBlock={props.addBlock}/>)}
+                {tickets.map(ticket => <TicketRow loggedIn={loggedIn}
+                            uid={props.uid} admin={props.admin} user={props.user}
+                            key={ticket.ticket_id} ticketData={ticket} addBlock={props.addBlock}
+                            update={props.update} setUpdate={props.setUpdate}/>)}
             </tbody>
         </Table>
     );
@@ -34,10 +37,10 @@ function TicketsTable(props) {
 
 function TicketRow(props) {
     const navigate = useNavigate();
-    const {uid, admin, loggedIn, ticketData} = props;
+    const {loggedIn, uid, admin, user, ticketData, update, setUpdate} = props;
     const [id] = useState(ticketData.ticket_id);
     const [status, setStatus] = useState(ticketData.state);
-    const[blocks, setBlocks] = useState([]);
+    const [blocks, setBlocks] = useState([]);
     const [show, setShow] = useState(false);
 
     const timeElapsed = (timestamp) => {
@@ -97,14 +100,19 @@ function TicketRow(props) {
     }
 
     useEffect(() => {
-        if (loggedIn && show) {
+        setUpdate(true);
+    }, []);
+
+    useEffect(() => {
+        if (loggedIn && show && update) {
             api.getBlocks(id)
                 .then(blocks => {
                     setBlocks(blocks);
+                    setUpdate(false);
                 })
                 .catch(e => { console.log(e) });
         }
-    }, [loggedIn, show, id]);
+    }, [loggedIn, show, update]);
 
     return(
         <>
@@ -123,17 +131,22 @@ function TicketRow(props) {
                 <td>{beautyCategory(ticketData.category)}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
             </tr>
-            {show && loggedIn && <TicketContentRow uid={uid} tid={id} status={status} loggedIn={loggedIn}
+            {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
+                    key={ticketData.ticket_id}
                     ticket_title={ticketData.title} ticket_author={ticketData.ticket_author_username}
                     ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
-                    blocks={blocks} addBlock={props.addBlock}/> }
+                    blocks={blocks} addBlock={props.addBlock}
+                    update={update} setUpdate={setUpdate}/> }
         </>
     );
 }
 
 function TicketContentRow(props) {
 
-    const { uid, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks } = props;
+    const { uid, user, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks, addBlock, update, setUpdate } = props;
+    
+    const navigate = useNavigate();
+    const formRef = useRef(null);
     const [newblockcontent, setNewBlockContent] = useState(null);
 
     const beautyAuthor = (author) => {
@@ -148,18 +161,21 @@ function TicketContentRow(props) {
         return sub_date;
     }
 
-    const handleClick = (event) => {
+    useEffect(() => {
+        setUpdate(true);
+    }, []);
+
+    const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('works!');
-        console.log(`TICKET_ID (key) = ${tid}`);
         const block = {
             "ticket_id": tid,
             "author_id": uid,
             "content": newblockcontent
         }
-        props.addBlock(block);
-        console.log(block);
-
+        addBlock(block);
+        formRef.current.reset();
+        setUpdate(false);
+        // navigate("/");
     }
 
     return(
@@ -184,17 +200,17 @@ function TicketContentRow(props) {
                         <BlockContentRow author={block.author_username} date={block.creation_time} content={block.content} />
                 </tr>
             ))}
-            {!status ? null
+            {(!status || (user === ticket_author && blocks.length === 0)) ? null
                 : <tr>
                     <td></td>
                     <td colspan={6}>
-                        <Form>
+                        <Form ref={formRef} onSubmit={handleSubmit}>
                             <Form.Group>
                                 <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => setNewBlockContent(e.target.value)} />
                             </Form.Group>
                             <Form.Group>
                                 <div className='text-end'>
-                                    <Button className='my-button' onClick={handleClick}>POST</Button>
+                                    <Button type='submit' className='my-button'>POST</Button>
                                 </div>
                             </Form.Group>
                         </Form>
