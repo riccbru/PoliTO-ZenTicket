@@ -124,12 +124,12 @@ function TicketRow(props) {
                 </td>
                 <td className="text-center">
                     {status ?
-                    <Badge bg="danger">OPEN</Badge>
-                    : <Badge bg="success">CLOSED</Badge>}
+                    <Badge style={{fontSize: '14px'}} bg="danger">OPEN</Badge>
+                    : <Badge style={{fontSize: '14px'}} bg="success">CLOSED</Badge>}
                 </td>
                 <td><b>{ticketData.title}</b></td>
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
-                <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} category={ticketData.category} />}</td>
+                <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} show={show} setShow={setShow} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
                 <td>TODO estimation</td>
             </tr>
@@ -143,18 +143,20 @@ function TicketRow(props) {
     );
 }
 
-function CategoryDropdown({tid, category}) {
+function CategoryDropdown({ tid, show, setShow, category }) {
     const [currentCategory, setCurrentCategory] = useState(category);
 
     useEffect(() => {
         setCurrentCategory(category);
-      }, [currentCategory]);
+    }, [currentCategory]);
 
     const handleChange = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
+        event.stopPropagation();
         const newCategory = event.target.value;
         api.changeCategory(tid, newCategory)
             .then(() => {
+                setShow(!!show);
                 setCurrentCategory(newCategory);
             })
             .catch(err => console.log(err));

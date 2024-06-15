@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
+const jsonwebtoken = require('jsonwebtoken');
 const LocalStrategy = require('passport-local');
 const { check, validationResult, oneOf } = require('express-validator');
 
@@ -16,6 +17,10 @@ const app = new express();
 
 const port = 80;
 const maxTitleLength = 30;
+
+const expireTime = 60;
+const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
+
 const corsOptions = {
   origin: 'http://localhost:5174',
   credentials: true,
@@ -52,6 +57,7 @@ app.listen(port,
   () => {
       console.log(`\x1b[42m[*]\x1b[0m \x1b[92mListening on port ${port}\x1b[0m (http://localhost:${port}/api)`);
 });
+
 
 /****************/
 /*** passport ***/
@@ -117,11 +123,10 @@ app.get('/api',
     res.send(text);
 });
 
-app.get('/api/tickets',
+app.get('/api/tickets/',
   (req, res) => {
-    ticketDao.getTickets()
+    ticketDao.getTickets(req.params.tid)
       .then(tickets => {
-        console.log(`index(getTickets): req.isAuthenticated = ${req.isAuthenticated()}`);
         if (req.isAuthenticated()) {
           res.json(tickets)
         } else {
@@ -290,7 +295,7 @@ app.get('/api/blocks/:tid', isLoggedIn,
     }
 });
 
-app.post('/api/blocks',
+app.post('/api/blocks', isLoggedIn,
   [
     check('ticket_id').isInt({ min: 1 }),
     check('author_id').isInt({ min: 1 }),
@@ -300,18 +305,29 @@ app.post('/api/blocks',
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.errors);
     }
-    const block = {
-      ticket_id: req.body.ticket_id,
-      author_id: req.body.author_id,
-      creation_time: dayjs().unix(),
-      content: req.body.content
-    }
-    try {
-      const result = await ticketDao.addBlock(block);
-      res.json(result);
-    } catch (err) {
-      return res.status(503).json({ error: `${err}` });
-    }
+
+    if (req.body.author_id === req.user.id) {
+      console.log(req.body.ticket_id);
+      const result = await ticketDao.getTickets(req.body.tid);
+      if (result.length === 0) {console.log("captured");}
+      // console.log(result);
+  
+      if (result.error) { res.status(404).json(result); }
+
+      const block = {
+        ticket_id: req.body.ticket_id,
+        author_id: req.body.author_id,
+        creation_time: dayjs().unix(),
+        content: req.body.content
+      }
+      // console.log(block);
+      try {
+        const result = await ticketDao.addBlock(block);
+        res.json(result);
+      } catch (err) {
+        return res.status(503).json({ error: `${err}` });
+      }
+    } else {return res.status(403).json({error: "Forbidden"})}
 });
 
 app.delete('/api/blocks/:bid',
@@ -326,7 +342,7 @@ app.delete('/api/blocks/:bid',
 });
 
 /******************/
-/*** Users APIs ***/
+/*** AuthN APIs ***/
 /******************/
 
 app.get('/api/users/:uid',
@@ -379,3 +395,21 @@ app.delete('/api/sessions/current',
       res.status(200).json({});
     });
 });
+
+/******************/
+/*** TOKEN APIs ***/
+/******************/
+
+app.get('/api/auth-token', isLoggedIn,
+  (req, res) => {
+    const authLevel = req.user.admin;
+
+    const payloadToSign = { access: authLevel, authID: req.user.id };
+    const jwtToken = jsonwebtoken.sign(payloadToSign, jwtSecret, { expiresIn: expireTime });
+
+    res.json({
+      authLevel: authLevel,
+      token: jwtToken,
+    });
+  }
+);
