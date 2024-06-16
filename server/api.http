@@ -56,8 +56,8 @@ Content-Type: application/json
 
 {
     "title": "prova",
-    "author_id": 3,
-    "category": "administrative",
+    "author_id": 1,
+    "category": "administrativ",
     "content": "this is a test!\nquesta è una prova!"
 }
 
