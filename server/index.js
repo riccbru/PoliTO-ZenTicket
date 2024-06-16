@@ -15,14 +15,14 @@ const ticketDao = require('./dao-tickets');
 
 const app = new express();
 
-const port = 80;
+const port = 3001;
 const maxTitleLength = 30;
 
 const expireTime = 60;
 const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
 
 const corsOptions = {
-  origin: 'http://localhost:5174',
+  origin: 'http://localhost:5173',
   credentials: true,
 };
 const sessionOptions = {

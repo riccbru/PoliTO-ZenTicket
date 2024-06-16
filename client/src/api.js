@@ -2,7 +2,7 @@
 
 import dayjs from 'dayjs';
 
-const SERVER_URL = 'http://localhost';
+const SERVER_URL = 'http://localhost:3001';
 
 const timeElapsed = (timestamp) => {
     // 'DD MMMM YYYY, HH:mm:ss'
@@ -205,7 +205,7 @@ async function getAuthToken() {
 
 function getStats(authToken, tickets) {
     return getJSON(
-        fetch(SERVER_URL + `:81/api/tickets-stats`, {
+        fetch(`http://localhost:3002/api/tickets-stats`, {
             method: 'POST',
             credentials: 'include',
             headers: {

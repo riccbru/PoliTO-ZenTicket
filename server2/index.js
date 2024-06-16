@@ -9,13 +9,13 @@ const { body, validationResult } = require("express-validator");
 
 const app = new express();
 
-const port = 81;
+const port = 3002;
 const corsOptions = {
-  origin: 'http://localhost:5174',
+  origin: 'http://localhost:5173',
   credentials: true,
 };
 
-const expireTime = 60;
+const expireTime = 100;
 const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
 
 
