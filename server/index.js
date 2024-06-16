@@ -128,12 +128,11 @@ app.get('/api/tickets/',
     ticketDao.getTickets(req.params.tid)
       .then(tickets => {
         if (req.isAuthenticated()) {
-          res.json(tickets)
+          res.json(tickets);
         } else {
           const allowed = tickets.map(({ content, ...rest }) => rest);
           res.json(allowed);
         }
-        // res.json(tickets);
       })
       .catch((err) => res.status(500).json(err));
 });
@@ -152,7 +151,10 @@ app.get('/api/tickets/:tid',
         const allowed = result.map(({ content, ...rest }) => rest);
         res.json(allowed);
       } else {
-        res.json(result);
+        const rendered = result.map(t => {
+          t.content.replce(/\n/g, '<br>');
+        });
+        res.json(rendered);
       }
     } catch (err) {
       res.status(500).send({error: err});

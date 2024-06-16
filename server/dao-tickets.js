@@ -122,7 +122,9 @@ exports.getBlocks = (ticket_id) => {
         const sql = 'SELECT blocks.*, block_author.username AS block_author_username FROM blocks LEFT JOIN users AS block_author ON blocks.author_id = block_author.user_id WHERE blocks.ticket_id = ? ORDER BY blocks.creation_time ASC';
         db.all(sql, [ticket_id], (err, rows) => {
             if (err) reject(err);
-            const blocks = rows.map(b => returnBlock(b));
+            const blocks = rows.map(b => {
+                returnBlock(b);
+            });
             resolve(blocks); 
         });
     });

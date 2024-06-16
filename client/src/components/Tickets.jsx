@@ -23,7 +23,7 @@ function TicketsTable(props) {
                     <th>Author</th>
                     <th>Category</th>
                     <th className="text-center">Submission</th>
-                    {admin ? <th>ETA</th> : null}
+                    {admin ? <th className="text-center">ETA</th> : null}
                 </tr>
             </thead>
             <tbody>

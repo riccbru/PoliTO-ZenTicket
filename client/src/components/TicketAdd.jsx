@@ -58,7 +58,7 @@ function TicketAdd(props) {
             "content": content,
         }
         props.addTicket(ticket);
-        console.log(ticket);
+        // console.log(ticket);
         // navigate("/");
     }
 
