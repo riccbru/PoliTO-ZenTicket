@@ -13,8 +13,6 @@ import secElapsed from '../api';
 
 function TableLayout(props) {
 
-    const [blocks, setBlocks] = useState([]);
-
     useEffect(() => {
         api.getTickets()
             .then(tickets => {
@@ -30,27 +28,29 @@ function TableLayout(props) {
         return parsed;
     }
 
-    // useEffect(() => {
-    //     if (props.tickets) {
-    //         if (props.authToken) {
-    //             api.getStats(props.authToken, parseTickets(props.tickets))
-    //                 .then(stats => {
-    //                     props.setStats(stats);
-    //                     })
-    //                 .catch(err => {
-    //                     api.getAuthToken()
-    //                         .then(resp => props.setAuthToken(resp.token));
-    //                 });
-    //         }
-    //     }
-    // }, [props.authToken, props.tickets]);
+    useEffect(() => {
+        if (props.tickets) {
+            if (props.authToken) {
+                api.getStats(props.authToken, parseTickets(props.tickets))
+                    .then(stats => {
+                        props.setStats(stats);
+                        // console.log(Array.isArray(stats)); // true
+                        // console.log(stats);
+                    })
+                    .catch(err => {
+                        api.getAuthToken()
+                            .then(resp => props.setAuthToken(resp.token));
+                    });
+            }
+        }
+    }, [props.authToken, props.tickets]);
 
     return(
         <Row>
             <Col>
                 <TicketsTable loggedIn={props.loggedIn}
                         uid={props.uid} admin={props.admin} user={props.user}
-                        tickets={props.tickets}
+                        tickets={props.tickets} stats={props.stats}
                         addBlock={props.addBlock}
                         update={props.update} setUpdate={props.setUpdate}/>
             </Col>
@@ -62,7 +62,7 @@ function AddLayout(props) {
     return(
         <Row>
             <Col>
-                <TicketAdd uid={props.uid} user={props.user} addTicket={props.addTicket}/>
+                <TicketAdd uid={props.uid} user={props.user} addTicket={props.addTicket} authToken={props.authToken} />
             </Col>
         </Row>
     );

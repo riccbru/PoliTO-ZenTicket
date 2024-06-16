@@ -72,7 +72,9 @@ function getStats(tickets, bool) {
   const stats = [];
   for (const t of tickets) {
     const stat = {};
-    stat.ticket_id = t.ticket_id;
+    if (t.ticket_id) {
+      stat.ticket_id = t.ticket_id;
+    }
     const estimation = getEstimation(t.title, t.category);
     const days = estimation / 24;
     if (bool) {
@@ -103,5 +105,5 @@ app.post('/api/tickets-stats',
 
     const stats = getStats(tickets, isAdmin);
 
-    res.status(200).json({stats: stats});
+    res.status(200).json(stats);
 });

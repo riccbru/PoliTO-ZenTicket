@@ -25,6 +25,7 @@ function AppRouted(props) {
   const [uid, setUID] = useState(null);
   const [admin, setAdmin] = useState(0);
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState([]);
   const [update, setUpdate] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState(null);
@@ -39,8 +40,8 @@ function AppRouted(props) {
         setUID(user.id);
         setAdmin(user.admin);
         setUser(user.username);
-        // api.getAuthToken()
-        //   .then(r => { setAuthToken(r.token) });
+        api.getAuthToken()
+          .then(r => { setAuthToken(r.token) });
       } catch(err) { }
     };
     checkAuth();
@@ -75,7 +76,7 @@ function AppRouted(props) {
       setUID(user.id);
       setAdmin(user.admin);
       setUser(user.username);
-      // renewToken();
+      renewToken();
     } catch(err) {
       throw err;
     }
@@ -87,7 +88,7 @@ function AppRouted(props) {
     setLoggedIn(false);
     setUID(null);
     setAdmin(0);
-    // setAuthToken(undefined);
+    setAuthToken(undefined);
   }
 
   function addTicket(ticket) {
@@ -124,10 +125,11 @@ function AppRouted(props) {
                         uid={uid} admin={admin} user={user}
                         tickets={tickets} setTickets={setTickets}
                         addBlock={addBlock}
-                        // authToken={authToken} setAuthToken={setAuthToken}
+                        stats={stats} setStats={setStats}
+                        authToken={authToken} setAuthToken={setAuthToken}
                         handleErrors={handleErrors}
                         update={update} setUpdate={setUpdate}/>} />
-          <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket}/> : <Navigate to="/login" />} />
+          <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket} authToken={authToken} stats={stats}/> : <Navigate to="/login" />} />
         </Route>
         <Route path="/login" element={loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />} />
       </Routes>

@@ -10,7 +10,7 @@ function TicketsTable(props) {
 
     const navigate = useNavigate();
 
-    const { admin, tickets, loggedIn} = props;
+    const { admin, tickets, loggedIn, stats } = props;
 
     return(
         <Table borderless className='ticket-table' hover>
@@ -23,14 +23,14 @@ function TicketsTable(props) {
                     <th>Author</th>
                     <th>Category</th>
                     <th className="text-center">Submission</th>
-                    <th>ETA</th>
+                    {admin ? <th>ETA</th> : null}
                 </tr>
             </thead>
             <tbody>
                 {tickets.map(ticket => <TicketRow loggedIn={loggedIn}
                             uid={props.uid} admin={admin} user={props.user}
                             key={ticket.ticket_id} ticketData={ticket}
-                            addBlock={props.addBlock}
+                            stats={stats} addBlock={props.addBlock}
                             update={props.update} setUpdate={props.setUpdate}/>)}
             </tbody>
         </Table>
@@ -44,6 +44,11 @@ function TicketRow(props) {
     const [status, setStatus] = useState(ticketData.state);
     const [blocks, setBlocks] = useState([]);
     const [show, setShow] = useState(false);
+
+    const getEstimation = (id, stats) => {
+        const object = stats.find(e => e.ticket_id === id);
+        return object ? object.estimation : undefined;
+    }
 
     const timeElapsed = (timestamp) => {
         // 'DD MMMM YYYY, HH:mm:ss'
@@ -133,7 +138,7 @@ function TicketRow(props) {
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
                 <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} show={show} setShow={setShow} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
-                <td>{'todo'}</td>
+                <td>{admin ? getEstimation(id, props.stats) : null}</td>
             </tr>
             {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
                     key={ticketData.ticket_id}

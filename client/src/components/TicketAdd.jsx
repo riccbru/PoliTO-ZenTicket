@@ -1,3 +1,4 @@
+import api from '../api';
 import dayjs from 'dayjs';
 import {useState} from 'react';
 import {Alert, Button, Form, Modal, Table} from 'react-bootstrap';
@@ -13,6 +14,7 @@ function TicketAdd(props) {
     const [modal, setModal] = useState(false);
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
+    const [estimation, setEstimation] = useState([]);
 
     const beautyName = (uname) => {
         if (uname) {
@@ -39,6 +41,12 @@ function TicketAdd(props) {
             setErrMex('Content is too long');
         } else {
             setModal(true);
+            const input = [{"title": title, "category": category}];
+            api.getStats(props.authToken, input)
+                .then(res => {
+                    setEstimation(res[0].estimation);
+                })
+                .catch(err => console.log(err));
         }
     } 
 
@@ -102,7 +110,7 @@ function TicketAdd(props) {
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Title:</th></tr></thead>
-                        <tbody><tr><td>{title}</td></tr></tbody>
+                        <tbody><tr><td style={{wordBreak: 'break-word'}}>{title}</td></tr></tbody>
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Content:</th></tr></thead>
@@ -114,7 +122,7 @@ function TicketAdd(props) {
                     </Table>
                     <Table borderless>
                         <thead><tr><th>ETA</th></tr></thead>
-                        <tbody><tr><td>estimation</td></tr></tbody>
+                        <tbody><tr><td>{estimation}</td></tr></tbody>
                     </Table>
                     
                 </Modal.Body>
