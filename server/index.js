@@ -189,7 +189,7 @@ app.post('/api/tickets', isLoggedIn,
     } else {
       res.status(403).json({error: "Forbidden"});
     }
-  });
+});
 
 app.patch('/api/tickets/open/:tid', isLoggedIn,
   [check('tid').isInt({ min: 1 })],

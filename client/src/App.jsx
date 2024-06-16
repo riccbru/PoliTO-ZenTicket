@@ -28,6 +28,8 @@ function AppRouted(props) {
   const [stats, setStats] = useState([]);
   const [update, setUpdate] = useState(true);
   const [tickets, setTickets] = useState([]);
+  const [open, setOpen] = useState(null);
+  const [close, setClose] = useState(null);
   const [message, setMessage] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState(undefined);

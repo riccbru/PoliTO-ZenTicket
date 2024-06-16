@@ -4,7 +4,6 @@ import TicketsTable from "./Tickets";
 import { NavBar } from "./NavBar";
 import { LoginForm } from "./Login";
 import { Outlet } from 'react-router-dom';
-import { TicketStats } from "./TicketStats";
 import { TicketAdd } from "./TicketAdd";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 
@@ -61,9 +60,11 @@ function TableLayout(props) {
 function AddLayout(props) {
     return(
         <Row>
-            <Col>
+            <Col xs={3}></Col>
+            <Col xs={6}>
                 <TicketAdd uid={props.uid} user={props.user} addTicket={props.addTicket} authToken={props.authToken} />
             </Col>
+            <Col xs={3}></Col>
         </Row>
     );
 }
@@ -76,10 +77,10 @@ function Common(props) {
             </Row>
             <p></p>
             <Row>
-                <Col xs={2}>
-                    <TicketStats />
-                </Col>
-                <Col xs={10}>
+                {/* <Col xs={2}>
+                    <TicketStats open={props.open} setOpen={props.setOpen} close={props.close} setClose={props.setClose}/>
+                </Col> */}
+                <Col xs={12}>
                     <Outlet />
                 </Col>
             </Row>
