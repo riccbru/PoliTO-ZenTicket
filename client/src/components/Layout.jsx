@@ -23,12 +23,35 @@ function TableLayout(props) {
             .catch(e => { props.handleErrors(e); });
     }, []);
 
+    const parseTickets = (tickets) => {
+        const parsed = tickets.map(
+            ({ state, author_id, ticket_author_username, submission_time, content, ...rest }) => rest
+        );
+        return parsed;
+    }
+
+    // useEffect(() => {
+    //     if (props.tickets) {
+    //         if (props.authToken) {
+    //             api.getStats(props.authToken, parseTickets(props.tickets))
+    //                 .then(stats => {
+    //                     props.setStats(stats);
+    //                     })
+    //                 .catch(err => {
+    //                     api.getAuthToken()
+    //                         .then(resp => props.setAuthToken(resp.token));
+    //                 });
+    //         }
+    //     }
+    // }, [props.authToken, props.tickets]);
+
     return(
         <Row>
             <Col>
                 <TicketsTable loggedIn={props.loggedIn}
                         uid={props.uid} admin={props.admin} user={props.user}
-                        tickets={props.tickets} addBlock={props.addBlock}
+                        tickets={props.tickets}
+                        addBlock={props.addBlock}
                         update={props.update} setUpdate={props.setUpdate}/>
             </Col>
         </Row>
@@ -65,43 +88,3 @@ function Common(props) {
 }
 
 export { Common, AddLayout, TableLayout };
-
-// function Home(props) {
-
-//     const [tickets, setTickets] = useState([])
-//     const [loggedIn, setLoggedIn] = useState(false);
-    
-//     useEffect(() => {
-//         console.log(`Home(useEffect)-1: loggedIn = ${props.loggedIn}`);
-//         console.log(`Home(useEffect)-1: tickets = ${props.tickets}`);
-//         props.setTickets([]);
-//         if (props.tickets) {
-//             api.getTickets()
-//             .then(tickets => {
-//                 props.setTickets(tickets);
-//             })
-//             .catch(e => { props.handleErrors(e); });
-//         }
-//         console.log(`Home(useEffect)-2: loggedIn = ${props.loggedIn}`);
-//         console.log(`Home(useEffect)-2: tickets = ${props.tickets}`);
-//     }, [props.loggedIn]);
-
-//     return (
-//         <>
-//             <Row>
-//                 <Col>
-//                     <NavBar user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
-//                 </Col>
-//             </Row>
-//             <p></p>
-//             <Row>
-//                 <Col xs={3}>
-//                     <TicketStats></TicketStats>
-//                 </Col>
-//                 <Col xs={9}>
-//                     <TableLayout loggedIn={props.loggedIn} tickets={props.tickets} />
-//                 </Col>
-//             </Row>
-//         </>
-//     );
-// }

@@ -180,7 +180,9 @@ async function login(credentials) {
 
 async function info() {
     return getJSON(
-        fetch(SERVER_URL + '/api/sessions/current', { credentials: 'include' })
+        fetch(SERVER_URL + '/api/sessions/current', {
+            credentials: 'include'
+        })
     );
 }
 
@@ -193,24 +195,31 @@ const logout = async () => {
     );
 }
 
-// const ticket = {
-//     state: 0,
-//     title: "title",
-//     author_id: 1,
-//     category: "inquiry",
-//     content: "this is a test!\nquesta è una prova!\nproviamo?"
-// }
+async function getAuthToken() {
+    return getJSON(
+        fetch(SERVER_URL + '/api/auth-token', {
+            credentials: 'include'
+        })
+    );
+}
 
-// const block = {
-//     ticket_id: 15,
-//     author_id: 2,
-//     content: "proviamo anche il blocco!let's try the block too!"
-// }
+function getStats(authToken, tickets) {
+    return getJSON(
+        fetch(SERVER_URL + `:81/api/tickets-stats`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"tickets": tickets})
+        })
+    );
+}
 
-// const result = await getTickets();
-// const result = await getBlocks(3);
-// const result = await getUser(1);
-// console.log(result);
-
-const api = { getTickets, addTicket, openTicket, closeTicket, changeCategory, deleteTicket, getBlocks, addBlock, deleteBlock, login, info, logout }
+const api = {
+    getTickets, addTicket, openTicket, closeTicket, changeCategory, deleteTicket,
+    getBlocks, addBlock, deleteBlock,
+    login, info, logout, getAuthToken, getStats
+}
 export default api;

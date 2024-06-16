@@ -35,10 +35,17 @@ Content-Type: application/json
 
 POST http://localhost:81/api/tickets-stats
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOjEsInVzZXJJRCI6MywiaWF0IjoxNzE4NDk3MDYxLCJleHAiOjE3MTg0OTcxMjF9.Q4-dQH0fFAQC-flbeFH-slc5cslpd4yrQRE8FPxhvEE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOjEsInVzZXJJRCI6MywiaWF0IjoxNzE4NTU1MjI1LCJleHAiOjE3MTg1NTUyODV9.LBHltzM33ZoyGU2F9h6M9h0pSxGFcIv25CUe-QrmKHg
 
 {
-    "tickets": "works!"
+    "tickets": [
+        { "ticket_id": 1, "title": "Crypto Exam", "category":"inquiry"},
+        { "ticket_id": 2, "title": "Missing BTC payment", "category": "payment" },
+        { "ticket_id": 3, "title": "PoliTO Network Security", "category": "maintenance" },
+        { "ticket_id": 4, "title": "Mobile App PoliTO", "category": "administrative" },
+        { "ticket_id": 5, "title": "Bug", "category": "new feature" },
+        { "ticket_id": 6, "title": "Deploy App", "category": "inquiry" }
+    ]
 }
 
 ###

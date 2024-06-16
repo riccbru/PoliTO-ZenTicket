@@ -27,7 +27,7 @@ app.use(jwt({
   algorithms: ["HS256"],
 }));
 
-// To return a better object in case of errors
+
 app.use( function (err, req, res, next) {
   //console.log("DEBUG: error handling function executed");
   console.log(err);
@@ -44,8 +44,13 @@ app.listen(port,
       console.log(`\x1b[42m[*]\x1b[0m \x1b[92mListening on port ${port}\x1b[0m (http://localhost:${port}/api)`);
 });
 
-function len(string) {
-  return(string.replace(/\s+/g, '').length);
+/***************/
+/** FUNCTIONS **/
+/***************/
+
+function len(text) {
+  const mod = Array.from(text).filter(c => c !== ' ' || c !== '\n');
+  return(mod.length);
 }
 
 function getRandom(min, max) {
@@ -55,7 +60,32 @@ function getRandom(min, max) {
   return Math.floor(random * (max - min + 1)) + min;
 }
 
-// function getEvaluation()
+function getEstimation(title, category) {
+  const t = len(title);
+  const c = len(category);
+  const sum = t + c;
+  const random = getRandom(10, 240);
+  return 10 * sum + random;
+}
+
+function getStats(tickets, bool) {
+  const stats = [];
+  for (const t of tickets) {
+    const stat = {};
+    stat.ticket_id = t.ticket_id;
+    const estimation = getEstimation(t.title, t.category);
+    const days = estimation / 24;
+    if (bool) {
+      const hours = estimation % 24;
+      stat.estimation = `${Math.floor(days)}d ${hours}h`;
+    } else {
+      stat.estimation = `${Math.round(days)}d`;
+    }
+    stats.push(stat);
+  }
+  return stats;
+}
+
 
 app.post('/api/tickets-stats',
   // body('tickets', 'Invalid array of films').isArray(),   // could be isArray({min: 1 }) if necessary
@@ -66,19 +96,12 @@ app.post('/api/tickets-stats',
       errList.push(...err.errors.map(e => e.msg));
       return res.status(400).json({ errors: errList });
     }
-    console.log("DEBUG: auth: ",req.auth);
+    // console.log("DEBUG: auth: ", req.auth);
 
     const isAdmin = req.auth.access;
     const tickets = req.body.tickets;
-    console.log(isAdmin);
-    console.log(tickets);
 
-    const min = 1;
-    const max = 240;
-    return res.json({tickets: tickets})
+    const stats = getStats(tickets, isAdmin);
 
-    // for (const [id, info] of tickets) {
-    //   const 
-    // }
-
+    res.status(200).json({stats: stats});
 });

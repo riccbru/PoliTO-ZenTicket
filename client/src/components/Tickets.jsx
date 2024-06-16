@@ -10,7 +10,7 @@ function TicketsTable(props) {
 
     const navigate = useNavigate();
 
-    const { admin, tickets, loggedIn } = props;
+    const { admin, tickets, loggedIn} = props;
 
     return(
         <Table borderless className='ticket-table' hover>
@@ -29,7 +29,8 @@ function TicketsTable(props) {
             <tbody>
                 {tickets.map(ticket => <TicketRow loggedIn={loggedIn}
                             uid={props.uid} admin={admin} user={props.user}
-                            key={ticket.ticket_id} ticketData={ticket} addBlock={props.addBlock}
+                            key={ticket.ticket_id} ticketData={ticket}
+                            addBlock={props.addBlock}
                             update={props.update} setUpdate={props.setUpdate}/>)}
             </tbody>
         </Table>
@@ -37,7 +38,7 @@ function TicketsTable(props) {
 }
 
 function TicketRow(props) {
-    // const navigate = useNavigate();
+
     const {loggedIn, uid, admin, user, ticketData, update, setUpdate} = props;
     const [id] = useState(ticketData.ticket_id);
     const [status, setStatus] = useState(ticketData.state);
@@ -132,7 +133,7 @@ function TicketRow(props) {
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
                 <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} show={show} setShow={setShow} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
-                <td>TODO estimation</td>
+                <td>{'todo'}</td>
             </tr>
             {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
                     key={ticketData.ticket_id}
@@ -149,6 +150,7 @@ function CategoryDropdown({ tid, show, setShow, category }) {
 
     useEffect(() => {
         setCurrentCategory(category);
+        setShow(false);
     }, [currentCategory]);
 
     const handleChange = (event) => {
@@ -157,7 +159,7 @@ function CategoryDropdown({ tid, show, setShow, category }) {
         const newCategory = event.target.value;
         api.changeCategory(tid, newCategory)
             .then(() => {
-                setShow(false);
+                setShow(true);
                 setCurrentCategory(newCategory);
             })
             .catch(err => console.log(err));
@@ -165,8 +167,8 @@ function CategoryDropdown({ tid, show, setShow, category }) {
 
     return(
         <Form.Select style={{width: '180px'}} className='my-button' title={currentCategory} onChange={handleChange}>
-            <option value={currentCategory}>{currentCategory.toUpperCase()}</option>
-            {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map(cat => <option value={cat}>{cat.toUpperCase()}</option>)}
+            <option key={1} value={currentCategory}>{currentCategory.toUpperCase()}</option>
+            {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map((cat, index) => <option key={index} value={cat}>{cat.toUpperCase()}</option>)}
         </Form.Select>
     );
 }

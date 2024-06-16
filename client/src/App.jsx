@@ -25,11 +25,11 @@ function AppRouted(props) {
   const [uid, setUID] = useState(null);
   const [admin, setAdmin] = useState(0);
   const [user, setUser] = useState(null);
-  const [blocks, setBlocks] = useState([]);
   const [update, setUpdate] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [authToken, setAuthToken] = useState(undefined);
 
   useEffect(()=> {
     const checkAuth = async() => {
@@ -39,11 +39,12 @@ function AppRouted(props) {
         setUID(user.id);
         setAdmin(user.admin);
         setUser(user.username);
+        // api.getAuthToken()
+        //   .then(r => { setAuthToken(r.token) });
       } catch(err) { }
     };
     checkAuth();
   }, []);
-
 
   const handleErrors = (err) => {
     let msg = '';
@@ -62,6 +63,11 @@ function AppRouted(props) {
     // setTimeout( () => setDirty(true), 2000);
   }
 
+  const renewToken = () => {
+    api.getAuthToken().then((resp) => { setAuthToken(resp.token); } )
+    .catch(err => {console.log("DEBUG: renewToken err: ", err)});
+  }
+
   const handleLogin = async (credentials) => {
     try {
       const user = await api.login(credentials);
@@ -69,6 +75,7 @@ function AppRouted(props) {
       setUID(user.id);
       setAdmin(user.admin);
       setUser(user.username);
+      // renewToken();
     } catch(err) {
       throw err;
     }
@@ -80,6 +87,7 @@ function AppRouted(props) {
     setLoggedIn(false);
     setUID(null);
     setAdmin(0);
+    // setAuthToken(undefined);
   }
 
   function addTicket(ticket) {
@@ -107,7 +115,6 @@ function AppRouted(props) {
       })
       .catch(e => handleErrors(e));
   }
-
   
   return (
     <Container fluid>
@@ -117,6 +124,7 @@ function AppRouted(props) {
                         uid={uid} admin={admin} user={user}
                         tickets={tickets} setTickets={setTickets}
                         addBlock={addBlock}
+                        // authToken={authToken} setAuthToken={setAuthToken}
                         handleErrors={handleErrors}
                         update={update} setUpdate={setUpdate}/>} />
           <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket}/> : <Navigate to="/login" />} />
