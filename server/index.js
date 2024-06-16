@@ -170,23 +170,28 @@ app.post('/api/tickets', isLoggedIn,
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.errors);
     }
-    const ticket = {
-      state: req.body.state,
-      title: req.body.title,
-      author_id: req.body.author_id,
-      category: req.body.category,
-      submission_time: dayjs().unix(),
-      content: req.body.content
+    const bodyID = req.body.author_id;
+    const uid = req.user.id;
+    if (bodyID === uid) {
+      const ticket = {
+        title: req.body.title,
+        author_id: req.body.author_id,
+        category: req.body.category,
+        submission_time: dayjs().unix(),
+        content: req.body.content
+      }
+      try {
+        const result = await ticketDao.addTicket(ticket);
+        res.json(result);
+      } catch (err) {
+        res.status(503).json({ error: `${err}` });
+      }
+    } else {
+      res.status(403).json({error: "Forbidden"});
     }
-    try {
-      const result = await ticketDao.addTicket(ticket);
-      res.json(result);
-    } catch (err) {
-      res.status(503).json({error: `${err}`});
-    }
-});
+  });
 
-app.put('/api/tickets/open/:tid', isLoggedIn,
+app.patch('/api/tickets/open/:tid', isLoggedIn,
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
@@ -208,7 +213,7 @@ app.put('/api/tickets/open/:tid', isLoggedIn,
     }
 });
 
-app.put('/api/tickets/close/:tid', isLoggedIn,
+app.patch('/api/tickets/close/:tid', isLoggedIn,
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
 
@@ -230,7 +235,7 @@ app.put('/api/tickets/close/:tid', isLoggedIn,
       .catch((err) => res.status(500).json(err));
 });
 
-app.put('/api/tickets/:tid', isLoggedIn,
+app.patch('/api/tickets/:tid', isLoggedIn,
   [
     check('tid').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'])
@@ -307,7 +312,7 @@ app.post('/api/blocks', isLoggedIn,
     }
 
     if (req.body.author_id === req.user.id) {
-      console.log(req.body.ticket_id);
+      // console.log(req.body.ticket_id);
       const result = await ticketDao.getTickets(req.body.tid);
       if (result.length === 0) {console.log("captured");}
       // console.log(result);
@@ -385,7 +390,7 @@ app.get('/api/sessions/current',
     if (req.isAuthenticated()) {
       res.status(200).json(req.user);
     } else {
-      res.status(401).json({ info: 'No active session' });
+      res.status(401).json({ error: 'No active session' });
     }
 });
 
@@ -404,7 +409,7 @@ app.get('/api/auth-token', isLoggedIn,
   (req, res) => {
     const authLevel = req.user.admin;
 
-    const payloadToSign = { access: authLevel, authID: req.user.id };
+    const payloadToSign = { access: authLevel, userID: req.user.id };
     const jwtToken = jsonwebtoken.sign(payloadToSign, jwtSecret, { expiresIn: expireTime });
 
     res.json({

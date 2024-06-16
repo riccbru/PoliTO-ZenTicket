@@ -58,9 +58,8 @@ function getRandom(min, max) {
 // function getEvaluation()
 
 app.post('/api/tickets-stats',
-  body('tickets', 'Invalid array of films').isArray(),   // could be isArray({min: 1 }) if necessary
+  // body('tickets', 'Invalid array of films').isArray(),   // could be isArray({min: 1 }) if necessary
   (req, res) => {
-
     const err = validationResult(req);
     const errList = [];
     if (!err.isEmpty()) {
@@ -71,12 +70,15 @@ app.post('/api/tickets-stats',
 
     const isAdmin = req.auth.access;
     const tickets = req.body.tickets;
+    console.log(isAdmin);
+    console.log(tickets);
 
     const min = 1;
     const max = 240;
+    return res.json({tickets: tickets})
 
     // for (const [id, info] of tickets) {
     //   const 
     // }
 
-  });
+});

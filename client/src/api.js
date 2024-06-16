@@ -79,7 +79,7 @@ function addTicket(ticket) {
 function openTicket(tid) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/open/${tid}`, {
-            method: 'PUT',
+            method: 'PATCH',
             credentials: 'include'
         })
     );
@@ -88,7 +88,7 @@ function openTicket(tid) {
 function closeTicket(tid) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/close/${tid}`, {
-            method: 'PUT',
+            method: 'PATCH',
             credentials: 'include'
         })
     );
@@ -97,7 +97,7 @@ function closeTicket(tid) {
 async function changeCategory(tid, newcat) {
     return getJSON(
         fetch(SERVER_URL + `/api/tickets/${tid}`, {
-            method: 'PUT',
+            method: 'PATCH',
             credentials: 'include',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"category": newcat})

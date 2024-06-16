@@ -22,7 +22,6 @@ Content-Type: application/json
 ###
 
 
-### FIX UNAUTH USER BLOCK POST
 POST http://localhost/api/blocks/ HTTP/1.1
 Content-Type: application/json
 
@@ -36,17 +35,10 @@ Content-Type: application/json
 
 POST http://localhost:81/api/tickets-stats
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOjEsImF1dGhJRCI6MywiaWF0IjoxNzE4NDgyMzkzLCJleHAiOjE3MTg0ODI0NTN9.ebDW-wl7ejh3DU2KLyvXnGfM5Z92KXbYgXACF0D4Gww
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOjEsInVzZXJJRCI6MywiaWF0IjoxNzE4NDk3MDYxLCJleHAiOjE3MTg0OTcxMjF9.Q4-dQH0fFAQC-flbeFH-slc5cslpd4yrQRE8FPxhvEE
 
 {
-    "tickets": [
-        { "1": ["Crypto Exam", "inquiry"] },
-        { "2": ["Missing BTC payment", "payment"] },
-        { "3": ["PoliTO Network Security", "maintenance"] },
-        { "4": ["Mobile App PoliTO", "administrative"] },
-        { "5": ["Bug", "new feature"] },
-        { "6": ["Deploy App", "inquiry"] },
-    ]
+    "tickets": "works!"
 }
 
 ###
@@ -64,7 +56,7 @@ Content-Type: application/json
 
 {
     "title": "prova",
-    "author_id": 1,
+    "author_id": 3,
     "category": "administrative",
     "content": "this is a test!\nquesta è una prova!"
 }

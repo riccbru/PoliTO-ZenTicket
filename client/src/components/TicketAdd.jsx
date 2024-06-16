@@ -106,11 +106,15 @@ function TicketAdd(props) {
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Content:</th></tr></thead>
-                        <tbody><tr><td>{content}</td></tr></tbody>
+                        <tbody><tr><td style={{wordBreak: 'break-word'}}>{content}</td></tr></tbody>
                     </Table>
                     <Table borderless>
                         <thead><tr><th>From user:</th></tr></thead>
                         <tbody><tr><td>{beautyName(props.user)}</td></tr></tbody>
+                    </Table>
+                    <Table borderless>
+                        <thead><tr><th>ETA</th></tr></thead>
+                        <tbody><tr><td>estimation</td></tr></tbody>
                     </Table>
                     
                 </Modal.Body>

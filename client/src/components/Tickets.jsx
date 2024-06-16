@@ -82,7 +82,8 @@ function TicketRow(props) {
         return sub_date;
     }
 
-    const handleClick = () => {
+    const handleClick = (event) => {
+        event.stopPropagation();
         setShow(!show);
     }
 
@@ -118,14 +119,14 @@ function TicketRow(props) {
     return(
         <>
             <tr className='clickable-row' onClick={handleClick}>
-                <td className="text-center">{(admin || (ticketData.author_id === uid && status)) ? <Button variant='warning' style={{color: '#fefeff'}} onClick={changeState}>{status ? <b>CLOSE</b> : <b>OPEN</b>}</Button> : null}</td>
+                <td className="text-center">{(admin || (ticketData.author_id === uid && status)) ? <Button variant='warning' style={{color: '#002c49', width: '80px'}} onClick={changeState}>{status ? <b>CLOSE</b> : <b>OPEN</b>}</Button> : null}</td>
                 <td className="text-center">
                     <Button className='my-button'>{'#' + id}</Button>
                 </td>
                 <td className="text-center">
                     {status ?
-                    <Badge style={{fontSize: '14px'}} bg="danger">OPEN</Badge>
-                    : <Badge style={{fontSize: '14px'}} bg="success">CLOSED</Badge>}
+                    <Badge style={{width: '70px'}} bg="danger">OPEN</Badge>
+                    : <Badge style={{width: '70px'}} bg="success">CLOSED</Badge>}
                 </td>
                 <td><b>{ticketData.title}</b></td>
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
@@ -151,12 +152,12 @@ function CategoryDropdown({ tid, show, setShow, category }) {
     }, [currentCategory]);
 
     const handleChange = (event) => {
-        // event.preventDefault();
+        event.preventDefault();
         event.stopPropagation();
         const newCategory = event.target.value;
         api.changeCategory(tid, newCategory)
             .then(() => {
-                setShow(!!show);
+                setShow(false);
                 setCurrentCategory(newCategory);
             })
             .catch(err => console.log(err));
