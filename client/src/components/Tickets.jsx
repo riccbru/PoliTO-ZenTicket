@@ -138,7 +138,7 @@ function TicketRow(props) {
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
                 <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} show={show} setShow={setShow} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
-                <td>{admin ? getEstimation(id, props.stats) : null}</td>
+                <td>{admin ? <Badge style={{fontSize: '17px'}} variant='info'>{getEstimation(id, props.stats)}</Badge> : null}</td>
             </tr>
             {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
                     key={ticketData.ticket_id}
