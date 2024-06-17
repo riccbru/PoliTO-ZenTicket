@@ -229,7 +229,11 @@ function TicketContentRow(props) {
                 <td colSpan={4} className='ticket-content'>
                     <Card border='info' style={{ color: '#fefeff', backgroundColor: '#143859' }}>
                         <Card.Title className='mx-3 mt-3'><b>{ticket_title}</b></Card.Title>
-                        <Card.Body>{ticket_content}</Card.Body>
+                        <Card.Body>{ticket_content?.split('\n').map((e, index) => (
+                            <React.Fragment key={index}>
+                                {e}<br />
+                            </React.Fragment>
+                        ))}</Card.Body>
                     </Card>
                 </td>
                 <td></td>
@@ -287,7 +291,13 @@ function BlockContentRow({ author, date, content }) {
                 </td>
                 <td colSpan={4} className='ticket-content'>
                     <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
-                        <Card.Body>{content}</Card.Body>
+                        <Card.Body>
+                        {content?.split('\n').map((e, index) => (
+                            <React.Fragment key={index}>
+                                {e}<br />
+                            </React.Fragment>
+                        ))}
+                        </Card.Body>
                     </Card>
                 </td>
                 <td></td>
