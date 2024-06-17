@@ -16,17 +16,15 @@ const ticketDao = require('./dao-tickets');
 const app = new express();
 
 const port = 3001;
+const expireTime = 10;
 const maxTitleLength = 30;
-
-const expireTime = 60;
 const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
-
 const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
 };
 const sessionOptions = {
-  secret: "shhhhh... it's a secret! - change it for the exam!",
+  secret: "WEBAPP24{mys3cr3t!!}",
   resave: false,
   saveUninitialized: false,
   cookie: { httpOnly: true, secure: app.get('env') === 'production' ? true : false },
@@ -48,6 +46,14 @@ const isLoggedIn = (req, res, next) => {
     return next();
   } else {
   return res.status(401).json({error: 'Not authorized'});
+  }
+}
+
+const isAdmin = (req, res, next) => {
+  if (req.user.admin) {
+    return next();
+  } else {
+    return res.status(503).json({error: "Forbidden"});
   }
 }
 
@@ -186,14 +192,14 @@ app.post('/api/tickets', isLoggedIn,
         const result = await ticketDao.addTicket(ticket);
         res.json(result);
       } catch (err) {
-        res.status(503).json({ error: `${err}` });
+        res.status(503).json({ error: err });
       }
     } else {
       res.status(403).json({error: "Forbidden"});
     }
 });
 
-app.patch('/api/tickets/open/:tid', isLoggedIn,
+app.patch('/api/tickets/open/:tid', isAdmin,
   [check('tid').isInt({ min: 1 })],
   async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
@@ -237,7 +243,7 @@ app.patch('/api/tickets/close/:tid', isLoggedIn,
       .catch((err) => res.status(500).json(err));
 });
 
-app.patch('/api/tickets/:tid', isLoggedIn,
+app.patch('/api/tickets/:tid', isAdmin,
   [
     check('tid').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'])
@@ -264,21 +270,6 @@ app.delete('/api/tickets/:tid',
       res.status(503).json({ error: `${err}` });
     }
 });
-
-// app.get('/api/blocks',
-//   (req, res) => {
-//     ticketDao.getBlocks()
-//       .then(blocks => {
-//         console.log(`index(getBlocks): req.isAuthenticated = ${req.isAuthenticated()}`);
-//         if (req.isAuthenticated()) {
-//           res.json(blocks);
-//         } else {
-//           res.json([]);
-//         }
-//       })
-//       .catch((err) => res.status(500).json(err))
-//   }
-// );
 
 app.get('/api/blocks/:tid', isLoggedIn,
 [check('tid').isInt({min: 1})],
@@ -352,24 +343,24 @@ app.delete('/api/blocks/:bid',
 /*** AuthN APIs ***/
 /******************/
 
-app.get('/api/users/:uid',
-  [check('uid').isInt({ min: 1 })],
-  async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      return res.status(422).json( errors.errors );
-    }
-    try {
-      const result = await userDao.getUser(req.params.uid);
-      if (result.error) {
-        res.status(404).json(result);
-      } else {
-        res.json(result);
-      }
-    } catch (err) {
-      res.status(500).send();
-    }
-});
+// app.get('/api/users/:uid',
+//   [check('uid').isInt({ min: 1 })],
+//   async (req, res) => {
+//     const errors = validationResult(req).formatWith(errorFormatter);
+//     if (!errors.isEmpty()) {
+//       return res.status(422).json( errors.errors );
+//     }
+//     try {
+//       const result = await userDao.getUser(req.params.uid);
+//       if (result.error) {
+//         res.status(404).json(result);
+//       } else {
+//         res.json(result);
+//       }
+//     } catch (err) {
+//       res.status(500).send();
+//     }
+// });
 
 app.post('/api/sessions',
   function (req, res, next) {
@@ -418,5 +409,4 @@ app.get('/api/auth-token', isLoggedIn,
       authLevel: authLevel,
       token: jwtToken,
     });
-  }
-);
+});

@@ -16,7 +16,7 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
-                    <th className="text-center"><Button className='my-button' onClick={() => {if (loggedIn) {navigate("/add")} else {navigate("/login")}}}>&#43;</Button></th>
+                    <th className="text-center"><Button className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}>&#43;</Button></th>
                     <th className="text-center">ID</th>
                     <th className="text-center">Status</th>
                     <th>Title</th>
@@ -145,12 +145,13 @@ function TicketRow(props) {
                     ticket_title={ticketData.title} ticket_author={ticketData.ticket_author_username}
                     ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
                     blocks={blocks} addBlock={props.addBlock}
-                    update={update} setUpdate={setUpdate}/> }
+                    setUpdate={setUpdate}/> }
         </>
     );
 }
 
-function CategoryDropdown({ tid, show, setShow, category }) {
+function CategoryDropdown({ tid, show, setShow, setUpdate, category }) {
+
     const [currentCategory, setCurrentCategory] = useState(category);
 
     useEffect(() => {
@@ -164,7 +165,7 @@ function CategoryDropdown({ tid, show, setShow, category }) {
         const newCategory = event.target.value;
         api.changeCategory(tid, newCategory)
             .then(() => {
-                setShow(true);
+                setShow(false);
                 setCurrentCategory(newCategory);
             })
             .catch(err => console.log(err));

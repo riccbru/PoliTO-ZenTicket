@@ -148,26 +148,30 @@ exports.getBlocks = (ticket_id) => {
 exports.addBlock = (block) => {
   return new Promise((resolve, reject) => {
     db.get(
-      "SELECT 1 FROM tickets WHERE ticket_id = ?",
+      "SELECT state FROM tickets WHERE ticket_id = ?",
       [block.ticket_id],
       (err, row) => {
         if (err) reject(err);
-        if (!row) reject("Not Found");
-        const sql =
-          "INSERT INTO blocks (ticket_id, author_id, creation_time, content) VALUES (?, ?, ?, ?)";
-        db.run(
-          sql,
-          [
-            block.ticket_id,
-            block.author_id,
-            block.creation_time,
-            block.content,
-          ],
-          function (err) {
-            if (err) reject(err);
-            resolve(exports.getBlocks(block.ticket_id));
-          }
-        );
+        if (!row) reject("Ticket not found");
+        else if (row.state) {
+          const sql =
+            "INSERT INTO blocks (ticket_id, author_id, creation_time, content) VALUES (?, ?, ?, ?)";
+          db.run(
+            sql,
+            [
+              block.ticket_id,
+              block.author_id,
+              block.creation_time,
+              block.content,
+            ],
+            function (err) {
+              if (err) reject(err);
+              resolve(exports.getBlocks(block.ticket_id));
+            }
+          );
+        } else {
+            reject("Ticket closed");
+        }
       }
     );
   });

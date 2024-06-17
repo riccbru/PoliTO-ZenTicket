@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { LoginForm } from './components/Login.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Common, AddLayout, TableLayout } from './components/Layout.jsx';
+import { Common, AddLayout, TableLayout, NotFound } from './components/Layout.jsx';
 import { Container, Row, Col, Button, Toast } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -28,9 +28,9 @@ function AppRouted(props) {
   const [stats, setStats] = useState([]);
   const [update, setUpdate] = useState(true);
   const [tickets, setTickets] = useState([]);
-  const [open, setOpen] = useState(null);
-  const [close, setClose] = useState(null);
-  const [message, setMessage] = useState(null);
+  // const [open, setOpen] = useState(null);
+  // const [close, setClose] = useState(null);
+  // const [message, setMessage] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState(undefined);
 
@@ -102,13 +102,13 @@ function AppRouted(props) {
       .catch(e => handleErrors(e));
   }
 
-  function changeCategory(cat) {
-    api.changeCategory(cat)
-      .then(() => {
-        setUpdate(true);
-        navigate("/");
-      })
-  }
+  // function changeCategory(cat) {
+  //   api.changeCategory(cat)
+  //     .then(() => {
+  //       setUpdate(true);
+  //       navigate("/");
+  //     })
+  // }
 
   function addBlock(block) {
     api.addBlock(block)
@@ -127,11 +127,12 @@ function AppRouted(props) {
                         uid={uid} admin={admin} user={user}
                         tickets={tickets} setTickets={setTickets}
                         addBlock={addBlock}
-                        stats={stats} setStats={setStats}
                         authToken={authToken} setAuthToken={setAuthToken}
-                        handleErrors={handleErrors}
-                        update={update} setUpdate={setUpdate}/>} />
+                        stats={stats} setStats={setStats}
+                        update={update} setUpdate={setUpdate}
+                        handleErrors={handleErrors}/>} />
           <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket} authToken={authToken} stats={stats}/> : <Navigate to="/login" />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/login" element={loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />} />
       </Routes>

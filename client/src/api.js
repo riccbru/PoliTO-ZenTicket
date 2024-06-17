@@ -153,19 +153,19 @@ function deleteBlock(bid) {
     );   
 }
 
-function getUser(uid) {
-    return getJSON(
-        fetch(SERVER_URL + `/api/users/${uid}`, {credentials: 'include'})
-    ).then(res => {
-        const user = {
-            id: res.id,
-            admin: res.admin,
-            username: res.username
-        }
-        return user;
-    })
-    .catch(err => { console.log(err) });
-}
+// function getUser(uid) {
+//     return getJSON(
+//         fetch(SERVER_URL + `/api/users/${uid}`, {credentials: 'include'})
+//     ).then(res => {
+//         const user = {
+//             id: res.id,
+//             admin: res.admin,
+//             username: res.username
+//         }
+//         return user;
+//     })
+//     .catch(err => { console.log(err) });
+// }
 
 async function login(credentials) {
     return getJSON(
@@ -222,4 +222,5 @@ const api = {
     getBlocks, addBlock, deleteBlock,
     login, info, logout, getAuthToken, getStats
 }
+
 export default api;

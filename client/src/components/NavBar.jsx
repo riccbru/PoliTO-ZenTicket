@@ -1,6 +1,6 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { LoginButton, LogoutButton } from './Login';
-import { Button, Container, Navbar } from 'react-bootstrap';
+import { Container, Navbar } from 'react-bootstrap';
 
 
 function NavBar(props) {
@@ -15,7 +15,7 @@ function NavBar(props) {
     }
 
     return(
-        <Navbar className='my-navbar' >
+        <Navbar className='my-navbar'>
             <Container fluid>
                 <Navbar.Brand href='/' className="mx-3" style={{ color: '#fefeff' }}>
                     <img alt='' src='../brand.png' width='45' height='45' className='mx-3'/>
@@ -23,10 +23,19 @@ function NavBar(props) {
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse className='justify-content-end'>
-                    {props.admin ? <Navbar.Text className={'mx-1'} style={{color: '#ffc108', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>
+
+                    {props.admin ?
+                      <Navbar.Text className={'mx-1'} style={{color: '#ffc108', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>
                     : <Navbar.Text className={'mx-1'} style={{color: '#808080', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>}
-                    {props.loggedIn ? <i class='bi bi-person-fill my-icon mx-3'></i> : <i class='bi bi-person my-icon mx-3'></i>}
-                    {!props.loggedIn ? <LoginButton /> : <LogoutButton logout={props.logout} />}
+
+                    {props.loggedIn ?
+                    <i class='bi bi-person-fill my-icon mx-3'></i>
+                    : <i class='bi bi-person my-icon mx-3'></i>}
+
+                    {!props.loggedIn ?
+                    <LoginButton />
+                    : <LogoutButton logout={props.logout} />}
+
                 </Navbar.Collapse>
             </Container>
         </Navbar>

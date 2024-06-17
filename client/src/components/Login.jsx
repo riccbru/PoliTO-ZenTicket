@@ -32,7 +32,12 @@ function LoginForm(props) {
             <Col xs={12} md={6} lg={4}>
                 <Card style={{ color: '#fefeff', backgroundColor: '#143859' }}>
                     <Card.Body>
-                        <h1 className='text-center pb-3' style={{ color: '#fefeff' }}>ZenTicket</h1>
+                        <div className='justify-content-center'>
+                            <h1 className='text-center pb-3' style={{ color: '#fefeff' }}>
+                                <img alt='' src='../brand.png' width='45' height='45' className='mx-3'/>
+                                ZenTicket
+                            </h1>
+                        </div>
                         <Form onSubmit={handleSubmit}>
                             {errMex ?
                                 <Alert dismissible onClose={() => setErrMex('')} variant='danger'>{errMex}</Alert>

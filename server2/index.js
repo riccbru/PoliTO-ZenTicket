@@ -1,47 +1,52 @@
-'use strict';
+"use strict";
 
-const cors = require('cors');
-const morgan = require('morgan'); 
-const express = require('express');
-const jsonwebtoken = require('jsonwebtoken');
-const { expressjwt: jwt } = require('express-jwt');
+const cors = require("cors");
+const morgan = require("morgan");
+const express = require("express");
+const jsonwebtoken = require("jsonwebtoken");
+const { expressjwt: jwt } = require("express-jwt");
 const { body, validationResult } = require("express-validator");
 
 const app = new express();
 
 const port = 3002;
+const jwtSecret = "qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8";
+const jwtOptions = {
+  secret: jwtSecret,
+  algorithms: ["HS256"],
+};
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: "http://localhost:5173",
   credentials: true,
 };
 
-const expireTime = 100;
-const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
-
-
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(jwt({
-  secret: jwtSecret,
-  algorithms: ["HS256"],
-}));
+app.use(jwt(jwtOptions));
 
-
-app.use( function (err, req, res, next) {
+app.use(function (err, req, res, next) {
   //console.log("DEBUG: error handling function executed");
   console.log(err);
-  if (err.name === 'UnauthorizedError') {
+  if (err.name === "UnauthorizedError") {
     // Example of err content:  {"code":"invalid_token","status":401,"name":"UnauthorizedError","inner":{"name":"TokenExpiredError","message":"jwt expired","expiredAt":"2024-05-23T19:23:58.000Z"}}
-    res.status(401).json({ errors: [{  'param': 'Server', 'msg': 'Authorization error', 'path': err.code }] });
+    res
+      .status(401)
+      .json({
+        errors: [
+          { param: "Server", msg: "Authorization error", path: err.code },
+        ],
+      });
   } else {
     next();
   }
-} );
+});
 
-app.listen(port, 
+app.listen(port,
   () => {
-      console.log(`\x1b[42m[*]\x1b[0m \x1b[92mListening on port ${port}\x1b[0m (http://localhost:${port}/api)`);
+  console.log(
+    `\x1b[42m[*]\x1b[0m \x1b[92mListening on port ${port}\x1b[0m (http://localhost:${port}/api)`
+  );
 });
 
 /***************/
@@ -49,8 +54,8 @@ app.listen(port,
 /***************/
 
 function len(text) {
-  const mod = Array.from(text).filter(c => c !== ' ' || c !== '\n');
-  return(mod.length);
+  const mod = Array.from(text).filter((c) => c !== " " || c !== "\n");
+  return mod.length;
 }
 
 function getRandom(min, max) {
@@ -88,14 +93,13 @@ function getStats(tickets, bool) {
   return stats;
 }
 
-
 app.post('/api/tickets-stats',
   // body('tickets', 'Invalid array of films').isArray(),   // could be isArray({min: 1 }) if necessary
   (req, res) => {
     const err = validationResult(req);
     const errList = [];
     if (!err.isEmpty()) {
-      errList.push(...err.errors.map(e => e.msg));
+      errList.push(...err.errors.map((e) => e.msg));
       return res.status(400).json({ errors: errList });
     }
     // console.log("DEBUG: auth: ", req.auth);
@@ -106,4 +110,5 @@ app.post('/api/tickets-stats',
     const stats = getStats(tickets, isAdmin);
 
     res.status(200).json(stats);
-});
+  }
+);
