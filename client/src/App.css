@@ -7,6 +7,7 @@ body, html, #root {
   color: #fefeff;
   /* background-color: #014d73; */
   background-color: #143859 !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .my-icon {
@@ -32,6 +33,7 @@ td {
   color: #fefeff;
   table-layout: fixed;
   background-color: #143859;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .ticket-content {
@@ -62,8 +64,6 @@ td {
 
 .my-button-info {
   color: #fefeff !important;
+  border: #808080 !important;
   background-color: #808080 !important;
 }
-
-
-

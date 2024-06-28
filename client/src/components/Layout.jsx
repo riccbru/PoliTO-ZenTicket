@@ -11,10 +11,11 @@ import dayjs from "dayjs";
 import secElapsed from "../api";
 
 function TableLayout(props) {
+
+  const [updateStats, setUpdateStats] = useState(false);
     
   useEffect(() => {
-    api
-      .getTickets()
+    api.getTickets()
       .then((tickets) => {
         props.setTickets(tickets);
       })
@@ -50,7 +51,11 @@ function TableLayout(props) {
           });
       }
     }
-  }, [props.admin, props.authToken, props.tickets]);
+  }, [props.admin, props.authToken, props.tickets, updateStats]);
+
+  const refresh = () => {
+    setUpdateStats((prev) => !prev);
+  }
 
   return (
     <Row>
@@ -60,11 +65,15 @@ function TableLayout(props) {
           uid={props.uid}
           admin={props.admin}
           user={props.user}
+          token={props.authToken}
           tickets={props.tickets}
+          setTickets={props.setTickets}
           stats={props.stats}
+          setStats={props.setStats}
           addBlock={props.addBlock}
           update={props.update}
           setUpdate={props.setUpdate}
+          refresh={refresh}
         />
       </Col>
     </Row>
@@ -104,12 +113,11 @@ function Common(props) {
       </Row>
       <p></p>
       <Row>
-        {/* <Col xs={2}>
-                    <TicketStats open={props.open} setOpen={props.setOpen} close={props.close} setClose={props.setClose}/>
-                </Col> */}
-        <Col xs={12}>
+        <Col xs={1}></Col>
+        <Col xs={10}>
           <Outlet />
         </Col>
+        <Col xs={1}></Col>
       </Row>
     </>
   );
@@ -123,7 +131,7 @@ function NotFound() {
       <div className="text-center" style={{ color: "#fefeff" }}>
         <h1>404 Not Found</h1>
         <p></p>
-        <h5>The page you are looking for does not exist (yet)</h5>
+        <h5>The page you are looking for does not exist</h5>
         <p></p>
         <Button className="my-button" onClick={() => navigate("/")}>Back to main page</Button>
       </div>

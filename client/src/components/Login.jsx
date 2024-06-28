@@ -40,15 +40,15 @@ function LoginForm(props) {
                         </div>
                         <Form onSubmit={handleSubmit}>
                             {errMex ?
-                                <Alert dismissible onClose={() => setErrMex('')} variant='danger'>{errMex}</Alert>
+                                <Alert onClose={() => setErrMex('')} variant='danger'>{errMex}</Alert>
                                 : null}
                             <Form.Group className='mb-3'>
                                 <Form.Label>Username</Form.Label>
-                                <Form.Control type='username' value={username} placeholder='name_surname' onChange={e => setUsername(e.target.value)}></Form.Control>
+                                <Form.Control type='username' value={username} placeholder='name_surname' onChange={e => { setUsername(e.target.value); setErrMex(''); }}></Form.Control>
                             </Form.Group>
                             <Form.Group className='mb-3'>
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></Form.Control>
+                                <Form.Control type='password' value={password} placeholder='password' onChange={e => { setPassword(e.target.value); setErrMex(''); }}></Form.Control>
                             </Form.Group>
 
                             <div className='d-flex justify-content-center'>

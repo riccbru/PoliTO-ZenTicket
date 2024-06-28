@@ -27,15 +27,15 @@ function TicketAdd(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (!category || category === 'Category') {
+        if (!category || category === 'category') {
             setErrMex('Choose category');
         } else if (!title) {
             setErrMex('Title is empty');
         } else if (!content) {
             setErrMex('Content is empty');
-        } else if (title.length > 90) {
+        } else if (title.length > 60) {
             setErrMex('Title is too long');
-        } else if (content.length < 10) {
+        } else if (content.length < 1) {
             setErrMex('Content is too short');
         } else if (content.length > 240) {
             setErrMex('Content is too long');
@@ -46,7 +46,17 @@ function TicketAdd(props) {
                 .then(res => {
                     setEstimation(res[0].estimation);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    api.getAuthToken()
+                        .then(t => {
+                            api.getStats(t.token, input)
+                                .then(r => {
+                                    setEstimation(r[0].estimation);
+                                })
+                                .catch(err => {});
+                        })
+                        .catch(err => {});
+                });
         }
     } 
 
@@ -65,15 +75,16 @@ function TicketAdd(props) {
     const handleCancel = () => {
         setModal(false);
     }
+    
     return(
         <>
         <h3 style={{color: '#fefeff'}}>ADD TICKET</h3>
         <p></p>
-        {errMex ? <Alert variant='danger' dismissible onClose={() => setErrMex('')}>{errMex}</Alert> : null}
+        {errMex ? <Alert variant='danger' onClose={() => setErrMex('')}>{errMex}</Alert> : null}
         <Form onSubmit={handleSubmit}>
         <Form.Group>
                 <Form.Label>Category</Form.Label>
-                <Form.Select style={{width: '200px'}} onChange={e => setCategory(e.target.value)}>
+                <Form.Select style={{width: '200px'}} onChange={e => { setCategory(e.target.value); setErrMex(''); }}>
                     <option value='category'>Category</option>
                     <option value='administrative'>Administrative</option>
                     <option value='inquiry'>Inquiry</option>
@@ -90,7 +101,7 @@ function TicketAdd(props) {
             <Form.Group>
                 <Form.Label>Ticket Content</Form.Label>
                 <Form.Control as='textarea' className='add-content' style={{width: '800px'}}
-                            type='text' placeholder='Ticket Content' onChange={e => setContent(e.target.value)} />
+                            type='text' placeholder='Ticket Content' onChange={e => { setContent(e.target.value); setErrMex(''); }} />
             </Form.Group>
                 <div className='d-flex justify-content-begin'>
                     <Button className='my-button mt-3' type='submit'>ADD TICKET</Button>

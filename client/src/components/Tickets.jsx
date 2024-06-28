@@ -4,7 +4,7 @@ import api from '../api';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
-import { Badge, Button, Card, Form, Table } from 'react-bootstrap';
+import { Alert, Badge, Button, Card, Form, ProgressBar, Table } from 'react-bootstrap';
 
 function TicketsTable(props) {
 
@@ -16,21 +16,22 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
-                    <th className="text-center"><Button className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}>&#43;</Button></th>
-                    <th className="text-center">ID</th>
-                    <th className="text-center">Status</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th className="text-center">Submission</th>
-                    {admin ? <th className="text-center">ETA</th> : null}
+                    <th className="text-center"><Button style={{width: '80px'}} className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}>&#43;</Button></th>
+                    <th className="text-center">TICKET ID</th>
+                    <th className="text-center">STATUS</th>
+                    <th colSpan={2}>TITLE</th>
+                    <th>AUTHOR</th>
+                    <th className="text-center">SUBMISSION</th>
+                    <th colSpan={2} className="text-center">CATEGORY</th>
+                    {(!admin || !loggedIn) ? null : <th className="text-center">ETA</th>}
                 </tr>
             </thead>
             <tbody>
-                {tickets.map(ticket => <TicketRow loggedIn={loggedIn}
+                {tickets.map((ticket, index) => <TicketRow key={index} loggedIn={loggedIn}
                             uid={props.uid} admin={admin} user={props.user}
-                            key={ticket.ticket_id} ticketData={ticket}
-                            stats={stats} addBlock={props.addBlock}
+                            ticketData={ticket} setTickets={props.setTickets}
+                            stat={stats[index]} setStats={props.setStats} refresh={props.refresh}
+                            addBlock={props.addBlock}
                             update={props.update} setUpdate={props.setUpdate}/>)}
             </tbody>
         </Table>
@@ -39,16 +40,11 @@ function TicketsTable(props) {
 
 function TicketRow(props) {
 
-    const {loggedIn, uid, admin, user, ticketData, update, setUpdate} = props;
-    const [id] = useState(ticketData.ticket_id);
-    const [status, setStatus] = useState(ticketData.state);
-    const [blocks, setBlocks] = useState([]);
+    const {loggedIn, uid, admin, user, ticketData, stat, update, setUpdate} = props;
+    const id = ticketData.ticket_id
     const [show, setShow] = useState(false);
-
-    const getEstimation = (id, stats) => {
-        const object = stats.find(e => e.ticket_id === id);
-        return object ? object.estimation : undefined;
-    }
+    const [blocks, setBlocks] = useState([]);
+    const status = ticketData.state;
 
     const timeElapsed = (timestamp) => {
         // 'DD MMMM YYYY, HH:mm:ss'
@@ -97,15 +93,63 @@ function TicketRow(props) {
         event.stopPropagation();
         if (status) {
             api.closeTicket(id)
-                .then(result => { setStatus(result[0].state); })
+                .then(result => {
+                    props.setTickets((prev) => {
+                        return prev.map((ticket) => {
+                            if (ticket.ticket_id === id) {
+                                return {...ticket, state: result[0].state};
+                            }
+                            return ticket;
+                        });
+                    });
+                })
                 .catch();
 
         } else {
             api.openTicket(id)
-                .then(result => { setStatus(result[0].state); })
+                .then(result => {
+                    props.setTickets((prev) => {
+                        return prev.map((ticket) => {
+                            if (ticket.ticket_id === id) {
+                                return {...ticket, state: result[0].state};
+                            }
+                            return ticket;
+                        });
+                    });
+                })
                 .catch();
         }
     }
+
+    const pgvalue = (eta) => {
+      const days = parseInt(eta.substring(0, eta.indexOf("d")));
+      const hours = parseInt(
+        eta.substring(eta.indexOf("d") + 2, eta.indexOf("h"))
+      );
+      const tot = 24 * days + hours;
+      const elapsed = dayjs().unix() - ticketData.submission_time;
+      const diff = Math.floor(elapsed / 3600);
+      if (diff < tot) {
+        return (diff / tot) * 100;
+      } else {
+        return 101;
+      }
+    };
+
+    const variantFun = (eta) => {
+      const pg = pgvalue(eta);
+      let out = "";
+      if (status) {
+        if (pg < 100) {
+          out = "warning";
+        } else {
+          out = "danger";
+        }
+      } else {
+        out = "success";
+      }
+      return out;
+    };
 
     useEffect(() => {
         setUpdate(true);
@@ -125,32 +169,45 @@ function TicketRow(props) {
     return(
         <>
             <tr className='clickable-row' onClick={handleClick}>
-                <td className="text-center">{(admin || (ticketData.author_id === uid && status)) ? <Button variant='warning' style={{color: '#002c49', width: '80px'}} onClick={changeState}>{status ? <b>CLOSE</b> : <b>OPEN</b>}</Button> : null}</td>
                 <td className="text-center">
-                    <Button className='my-button'>{'#' + id}</Button>
+                    {(admin || (status && ticketData.author_id === uid)) ?
+                        <Button style={{width: '80px', color: '#fefefe', backgroundColor: '#7f4af6'}} onClick={changeState}>
+                            {status ? <b>CLOSE</b> : <b>OPEN</b>}
+                            </Button>
+                        : null}
+                </td>
+                <td className="text-center">
+                    <Button style={{width: '80px'}} className='my-button'>{'#' + id}</Button>
                 </td>
                 <td className="text-center">
                     {status ?
-                    <Badge style={{width: '70px'}} bg="danger">OPEN</Badge>
-                    : <Badge style={{width: '70px'}} bg="success">CLOSED</Badge>}
+                    <Button style={{width: '90px'}} variant="success"><b>OPEN</b></Button>
+                    : <Button style={{width: '90px'}} variant="danger"><b>CLOSED</b></Button>}
                 </td>
-                <td><b>{ticketData.title}</b></td>
+                <td colSpan={2}><b>{ticketData.title}</b></td>
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
-                <td>{!admin ? beautyCategory(ticketData.category) : <CategoryDropdown tid={id} show={show} setShow={setShow} category={ticketData.category} />}</td>
                 <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
-                <td>{admin ? <Badge style={{fontSize: '17px'}} variant='info'>{getEstimation(id, props.stats)}</Badge> : null}</td>
+                <td colSpan={2} className="text-center">
+                    {!admin ? beautyCategory(ticketData.category)
+                    : <CategoryDropdown tid={id} show={show} setShow={setShow} setTickets={props.setTickets} title={ticketData.title} category={ticketData.category} refresh={props.refresh}/>}
+                </td>
+                {!admin ? null
+                : <td className='text-center'>{admin ? <Badge pill style={{fontSize: '17px'}} variant='info'>{stat?.estimation}</Badge> : null}
+                {admin && status ? <ProgressBar animated variant={variantFun(String(stat?.estimation))} className='mt-2' now={status ? pgvalue(String(stat?.estimation)) : 100} /> : null }
+                </td>} 
+                {!admin ? <td></td> : null}
             </tr>
             {show && loggedIn && <TicketContentRow uid={uid} user={user} tid={id} status={status} loggedIn={loggedIn}
                     key={ticketData.ticket_id}
                     ticket_title={ticketData.title} ticket_author={ticketData.ticket_author_username}
                     ticket_date={ticketData.submission_time} ticket_content={ticketData.content}
                     blocks={blocks} addBlock={props.addBlock}
-                    setUpdate={setUpdate}/> }
+                    setUpdate={setUpdate}/>}
         </>
     );
 }
 
-function CategoryDropdown({ tid, show, setShow, setUpdate, category }) {
+function CategoryDropdown({ tid, show, setShow, setUpdate, category, refresh }) {
 
     const [currentCategory, setCurrentCategory] = useState(category);
 
@@ -167,12 +224,13 @@ function CategoryDropdown({ tid, show, setShow, setUpdate, category }) {
             .then(() => {
                 setShow(false);
                 setCurrentCategory(newCategory);
+                refresh();
             })
             .catch(err => console.log(err));
     }
 
     return(
-        <Form.Select style={{width: '180px'}} className='my-button' title={currentCategory} onChange={handleChange}>
+        <Form.Select style={{width: '230px'}} className='my-button text-center' title={currentCategory} onChange={handleChange}>
             <option key={1} value={currentCategory}>{currentCategory.toUpperCase()}</option>
             {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map((cat, index) => <option key={index} value={cat}>{cat.toUpperCase()}</option>)}
         </Form.Select>
@@ -185,6 +243,7 @@ function TicketContentRow(props) {
     
     const navigate = useNavigate();
     const formRef = useRef(null);
+    const [errMex, setErrMex] = useState('');
     const [newblockcontent, setNewBlockContent] = useState(null);
 
     const beautyAuthor = (author) => {
@@ -195,7 +254,7 @@ function TicketContentRow(props) {
     }
 
     const beautyDate = (date) => {
-        const sub_date = dayjs.unix(date).format('on D MMMM YYYY [at] HH:mm:ss');
+        const sub_date = dayjs.unix(date).format('dddd DD MMMM YYYY, HH:mm:ss');
         return sub_date;
     }
 
@@ -206,15 +265,22 @@ function TicketContentRow(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const block = {
-            "ticket_id": tid,
-            "author_id": uid,
-            "content": newblockcontent
+        if (!newblockcontent) {
+            setErrMex('Answer cannot be empty...');
+        } else if (newblockcontent.length < 1) {
+            setErrMex('Answer is too short (min 1 char)');
+        } else if (newblockcontent.length > 240){
+            setErrMex('Answer is too long (max 240 chars)');
+        } else {
+            const block = {
+                "ticket_id": tid,
+                "author_id": uid,
+                "content": newblockcontent
+            }
+            addBlock(block);
+            formRef.current.reset();
+            setUpdate(false);
         }
-        addBlock(block);
-        formRef.current.reset();
-        setUpdate(false);
-        // navigate("/");
     }
 
     return(
@@ -223,11 +289,11 @@ function TicketContentRow(props) {
                 <td></td>
                 <td colSpan={2}>
                     <Card border='info' style={{ color: '#fefeff', backgroundColor: '#143859' }}>
-                        <Card.Body>{ticket_author && beautyAuthor(ticket_author)}</Card.Body>
-                        <Card.Body style={{color: '#6c757d'}}>{ticket_date && beautyDate(ticket_date)}</Card.Body>
+                        <Card.Body><b>{ticket_author && beautyAuthor(ticket_author)}</b></Card.Body>
+                        <Card.Body style={{color: '#6c757d'}}><b>{ticket_date && beautyDate(ticket_date)}</b></Card.Body>
                     </Card>
                 </td>
-                <td colSpan={4} className='ticket-content'>
+                <td colSpan={6} className='ticket-content'>
                     <Card border='info' style={{ color: '#fefeff', backgroundColor: '#143859' }}>
                         <Card.Title className='mx-3 mt-3'><b>{ticket_title}</b></Card.Title>
                         <Card.Body>{ticket_content?.split('\n').map((e, index) => (
@@ -244,18 +310,18 @@ function TicketContentRow(props) {
                         <BlockContentRow author={block.author_username} date={block.creation_time} content={block.content} />
                 </tr>
             ))}
-            {(!status || (user === ticket_author && blocks.length === 0)) ? null
+            {(!status) ? null
                 : <tr>
-                    <td></td>
-
+                    <td colSpan={3}></td>
                     <td colSpan={6}>
                         <Form ref={formRef} onSubmit={handleSubmit}>
+                        {errMex ? <Alert variant='danger'>{errMex}</Alert> : null}
                             <Form.Group>
-                                <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => setNewBlockContent(e.target.value)} />
+                                <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => {setNewBlockContent(e.target.value); setErrMex('');}} />
                             </Form.Group>
                         <Form.Group>
                             <div className='text-center mx-3 mt-3'>
-                                <Button type='submit' className='my-button'>POST</Button>
+                                <Button type='submit' style={{width: '100px', backgroundColor: '#7f4af6'}}><b>POST</b></Button>
                             </div>
                         </Form.Group>
                     </Form>
@@ -277,7 +343,7 @@ function BlockContentRow({ author, date, content }) {
     }
 
     const beautyDate = (date) => {
-        const sub_date = dayjs.unix(date).format('on D MMMM YYYY [at] HH:mm:ss');
+        const sub_date = dayjs.unix(date).format('dddd DD MMMM YYYY, HH:mm:ss');
         return sub_date;
     }
 
@@ -286,11 +352,11 @@ function BlockContentRow({ author, date, content }) {
                 <td></td>
                 <td colSpan={2}>
                     <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
-                        <Card.Body>{author && beautyAuthor(author)}</Card.Body>
-                        <Card.Body style={{color: '#6c757d'}}>{date && beautyDate(date)}</Card.Body>
+                        <Card.Body><b>{author && beautyAuthor(author)}</b></Card.Body>
+                        <Card.Body style={{color: '#6c757d'}}><b>{date && beautyDate(date)}</b></Card.Body>
                     </Card>
                 </td>
-                <td colSpan={4} className='ticket-content'>
+                <td colSpan={6} className='ticket-content'>
                     <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
                         <Card.Body>
                         {content?.split('\n').map((e, index) => (

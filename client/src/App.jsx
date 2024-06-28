@@ -28,9 +28,6 @@ function AppRouted(props) {
   const [stats, setStats] = useState([]);
   const [update, setUpdate] = useState(true);
   const [tickets, setTickets] = useState([]);
-  // const [open, setOpen] = useState(null);
-  // const [close, setClose] = useState(null);
-  // const [message, setMessage] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState(undefined);
 
@@ -60,10 +57,7 @@ function AppRouted(props) {
       msg = err[0].msg + " : " + err[0].path;
     else if (typeof err === "string") msg = String(err);
     else msg = "Unknown Error";
-    setMessage(msg); 
     console.log(err);
-
-    // setTimeout( () => setDirty(true), 2000);
   }
 
   const renewToken = () => {
@@ -101,14 +95,6 @@ function AppRouted(props) {
       })
       .catch(e => handleErrors(e));
   }
-
-  // function changeCategory(cat) {
-  //   api.changeCategory(cat)
-  //     .then(() => {
-  //       setUpdate(true);
-  //       navigate("/");
-  //     })
-  // }
 
   function addBlock(block) {
     api.addBlock(block)

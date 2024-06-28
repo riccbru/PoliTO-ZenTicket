@@ -17,7 +17,8 @@ const app = new express();
 
 const port = 3001;
 const expireTime = 10;
-const maxTitleLength = 30;
+const maxTitleLength = 60;
+const maxContentLength = 240;
 const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -172,7 +173,7 @@ app.post('/api/tickets', isLoggedIn,
     check('title').isLength({ min: 1, max: maxTitleLength }),
     check('author_id').isInt({ min: 1 }),
     check('category').isIn(['administrative', 'inquiry', 'maintenance', 'new feature', 'payment']),
-    check('content').isLength({ min: 10, max: 240 })
+    check('content').isLength({ min: 1, max: maxContentLength })
   ], async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
     if (!errors.isEmpty()) {
@@ -297,7 +298,7 @@ app.post('/api/blocks', isLoggedIn,
   [
     check('ticket_id').isInt({ min: 1 }),
     check('author_id').isInt({ min: 1 }),
-    check('content').isLength({ min: 10, max: 240 })
+    check('content').isLength({ min: 1, max: maxContentLength })
   ], async (req, res) => {
     const errors = validationResult(req).formatWith(errorFormatter);
     if (!errors.isEmpty()) {
