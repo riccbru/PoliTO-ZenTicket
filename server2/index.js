@@ -77,19 +77,20 @@ function getStats(tickets, bool) {
     }
     const estimation = getEstimation(t.title, t.category);
     const days = estimation / 24;
-    if (bool) {
-      const hours = estimation % 24;
-      stat.estimation = `${Math.floor(days)}d ${hours}h`;
-    } else {
-      stat.estimation = `${Math.round(days)}d`;
-    }
+    if (t.state) {
+      if (bool) {
+        const hours = estimation % 24;
+        stat.estimation = `${Math.floor(days)}d ${hours}h`;
+      } else {
+        stat.estimation = `${Math.round(days)}d`;
+      }
+    } else { stat.estimation = '0'; }
     stats.push(stat);
   }
   return stats;
 }
 
 app.post('/api/tickets-stats',
-  // body('tickets', 'Invalid array of films').isArray(),   // could be isArray({min: 1 }) if necessary
   (req, res) => {
     const err = validationResult(req);
     const errList = [];
@@ -97,7 +98,6 @@ app.post('/api/tickets-stats',
       errList.push(...err.errors.map((e) => e.msg));
       return res.status(400).json({ errors: errList });
     }
-    // console.log("DEBUG: auth: ", req.auth);
 
     const isAdmin = req.auth.access;
     const tickets = req.body.tickets;

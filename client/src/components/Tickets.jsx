@@ -195,7 +195,7 @@ function TicketRow(props) {
                     : <CategoryDropdown tid={id} show={show} setShow={setShow} setTickets={props.setTickets} title={ticketData.title} category={ticketData.category} refresh={props.refresh}/>}
                 </td>
                 {!admin ? null
-                : <td className='text-center'>{admin ? <Badge pill style={{fontSize: '17px'}} variant='info'>{stat?.estimation}</Badge> : null}
+                : <td className='text-center'>{admin && status ? <Badge pill style={{fontSize: '17px'}} variant='info'>{stat?.estimation}</Badge> : null}
                 {admin && status ? <ProgressBar animated variant={variantFun(String(stat?.estimation))} className='mt-2' now={status ? pgvalue(String(stat?.estimation)) : 100} /> : null }
                 </td>} 
                 {!admin ? <td></td> : null}

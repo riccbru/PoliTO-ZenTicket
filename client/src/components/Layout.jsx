@@ -25,6 +25,7 @@ function TableLayout(props) {
       return {
         ticket_id: ticket.ticket_id,
         title: ticket.title,
+        state: ticket.state,
         category: ticket.category
       }
     });

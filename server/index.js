@@ -58,8 +58,6 @@ const isAdmin = (req, res, next) => {
   }
 }
 
-
-// activate the server
 app.listen(port, 
   () => {
       console.log(`\x1b[42m[*]\x1b[0m \x1b[92mListening on port ${port}\x1b[0m (http://localhost:${port}/api)`);
