@@ -359,7 +359,7 @@ app.delete('/api/sessions/current',
 /*** TOKEN APIs ***/
 /******************/
 
-app.get('/api/auth-token', isLoggedIn,
+app.get('/api/token', isLoggedIn,
   (req, res) => {
     const authLevel = req.user.admin;
 

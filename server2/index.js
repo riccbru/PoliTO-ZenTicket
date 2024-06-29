@@ -90,7 +90,7 @@ function getStats(tickets, bool) {
   return stats;
 }
 
-app.post('/api/tickets-stats',
+app.post('/api/stats',
   (req, res) => {
     const err = validationResult(req);
     const errList = [];

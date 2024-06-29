@@ -111,7 +111,7 @@ function AppRouted() {
                         stats={stats} setStats={setStats}
                         update={update} setUpdate={setUpdate}
                         handleErrors={handleErrors}/>} />
-          <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket} authToken={authToken} stats={stats}/> : <Navigate to="/login" />} />
+          <Route path="/add" element={loggedIn ? <AddLayout uid={uid} user={user} addTicket={addTicket} authToken={authToken} stats={stats}/> : <Navigate to="/" />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/login" element={loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />} />

@@ -52,13 +52,13 @@
   - Response: empy JSON and `200` status code
 
 ### Token
-- GET `/api/auth-token`
+- GET `/api/token`
   - Request parameters: none
   - Response: authLevel (boolean) and JWT token
 
 ## API Server2
 
-- POST `/api/ticket-stats`
+- POST `/api/stats`
   - Request parameters: JWT token in header's `Bearer` and JSON body with a list of all tickets
   - Response: JSON body with a list of Objects containing ticket id and estimation
 

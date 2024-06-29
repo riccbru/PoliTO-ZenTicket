@@ -160,7 +160,7 @@ const logout = async () => {
 
 async function getAuthToken() {
     return getJSON(
-        fetch(SERVER_URL + '/api/auth-token', {
+        fetch(SERVER_URL + '/api/token', {
             credentials: 'include'
         })
     );
@@ -168,7 +168,7 @@ async function getAuthToken() {
 
 function getStats(authToken, tickets) {
     return getJSON(
-        fetch(`http://localhost:3002/api/tickets-stats`, {
+        fetch(`http://localhost:3002/api/stats`, {
             method: 'POST',
             credentials: 'include',
             headers: {

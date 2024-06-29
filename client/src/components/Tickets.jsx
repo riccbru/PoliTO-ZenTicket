@@ -165,7 +165,7 @@ function TicketRow(props) {
                 <td className="text-center">
                     {(admin || (status && ticketData.author_id === uid)) ?
                         <OverlayTrigger placement='bottom' overlay={<Tooltip id="checkbox-tooltip">{status ? 'Close ticket' : 'Re-open ticket'}</Tooltip>}>
-                            <Form.Check className='mt-2' checked={!status} onClick={changeState}></Form.Check>
+                            <Form.Check className='mt-2' checked={!status} onChange={changeState}></Form.Check>
                         </OverlayTrigger>
                         : null}
                 </td>
