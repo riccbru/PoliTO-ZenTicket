@@ -16,14 +16,20 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
-                    <th className="text-center"><Button style={{width: '80px'}} className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}><b style={{fontSize: '20px'}}>&#43;</b></Button></th>
+                    <th className="text-center">
+                        <OverlayTrigger placement='top' overlay={<Tooltip id='add'>Add new ticket</Tooltip>}>
+                            <Button style={{width: '80px'}} className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}>
+                                <b style={{fontSize: '20px'}}>&#43;</b>
+                            </Button>
+                        </OverlayTrigger>
+                    </th>
                     <th className="text-center"><h4><b>ID</b></h4></th>
                     <th className="text-center"><h4><b>STATUS</b></h4></th>
                     <th colSpan={2}><h4><b>TITLE</b></h4></th>
                     <th><h4><b>AUTHOR</b></h4></th>
                     <OverlayTrigger placement='top' overlay={<Tooltip id='TIME-th'>Time elapsed since ticket submission</Tooltip>}><th className="text-center"><h4><b>TIME</b></h4></th></OverlayTrigger>
                     <th colSpan={2} className="text-center"><h4><b>CATEGORY</b></h4></th>
-                    {!admin ? null : <OverlayTrigger placement='top' overlay={<Tooltip id='ETA-th'>Estimated Time of Arrival</Tooltip>}><th className="text-center"><h4><b>ETA</b></h4></th></OverlayTrigger>}
+                    {!admin ? null : <OverlayTrigger placement='top' overlay={<Tooltip id='ETA-th'>Estimated Time of Completion</Tooltip>}><th className="text-center"><h4><b>ETC</b></h4></th></OverlayTrigger>}
                 </tr>
             </thead>
             <tbody>
@@ -90,7 +96,9 @@ function TicketRow(props) {
     }
 
     const changeState = (event) => {
+        // event.preventDefault();
         event.stopPropagation();
+        setShow(false);
         if (status) {
             api.closeTicket(id)
                 .then(result => {
@@ -165,7 +173,7 @@ function TicketRow(props) {
                 <td className="text-center">
                     {(admin || (status && ticketData.author_id === uid)) ?
                         <OverlayTrigger placement='bottom' overlay={<Tooltip id="checkbox-tooltip">{status ? 'Close ticket' : 'Re-open ticket'}</Tooltip>}>
-                            <Form.Check className='mt-2' checked={!status} onChange={changeState}></Form.Check>
+                            <Form.Check style={{fontSize: '20px'}} className='mt-2' checked={!status} onChange={changeState}></Form.Check>
                         </OverlayTrigger>
                         : null}
                 </td>
@@ -187,7 +195,7 @@ function TicketRow(props) {
                 {!admin ? null
                 : <td className='text-center'>{admin && status ? <Badge pill style={{fontSize: '17px'}} variant='info'>{stat?.estimation}</Badge> : null}
                 {admin && status ?
-                    <OverlayTrigger placement='bottom' overlay={<Tooltip id='progressbar'>{pgvalue(String(stat?.estimation)) < 100 ? Math.round(pgvalue(String(stat?.estimation))) + ' %' : 'ETA delayed'}</Tooltip>}>
+                    <OverlayTrigger placement='bottom' overlay={<Tooltip id='progressbar'>{pgvalue(String(stat?.estimation)) < 100 ? Math.round(pgvalue(String(stat?.estimation))) + '%' : 'ETA delayed'}</Tooltip>}>
                         <ProgressBar animated variant={variantFun(String(stat?.estimation))} className='mt-2' now={status ? pgvalue(String(stat?.estimation)) : 100} />
                     </OverlayTrigger>
                 : null}
@@ -227,7 +235,7 @@ function CategoryDropdown({ tid, setShow, category, refresh }) {
     }
 
     return(
-        <OverlayTrigger placement='top' overlay={<Tooltip id='category'>Category change dropdown</Tooltip>}>
+        <OverlayTrigger placement='bottom' overlay={<Tooltip id='category'>Category change dropdown</Tooltip>}>
             <Form.Select style={{width: '230px'}} className='my-button text-center' title={currentCategory} onChange={handleChange}>
             <option key={1} value={currentCategory}>{currentCategory.toUpperCase()}</option>
             {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map((cat, index) => <option key={index} value={cat}>{cat.toUpperCase()}</option>)}
@@ -357,7 +365,7 @@ function BlockContentRow({ author, date, content }) {
         <>
                 <td></td>
                 <td colSpan={2}>
-                    <Card borderless style={{ color: '#fefeff', border: '#002c49', backgroundColor: '#002c49' }}>
+                    <Card style={{ color: '#fefeff', border: '#002c49', backgroundColor: '#002c49' }}>
                         <Card.Body><b>{author && beautyAuthor(author)}</b></Card.Body>
                         <Card.Body style={{color: '#6c757d'}}><b>{date && beautyDate(date)}</b></Card.Body>
                     </Card>

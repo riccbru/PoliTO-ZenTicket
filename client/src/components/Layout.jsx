@@ -35,8 +35,7 @@ function TableLayout(props) {
   useEffect(() => {
     if (props.tickets) {
       if (props.admin && props.authToken) {
-        api
-          .getStats(props.authToken, parseTickets(props.tickets))
+        api.getStats(props.authToken, parseTickets(props.tickets))
           .then((stats) => {
             props.setStats(stats);
           })

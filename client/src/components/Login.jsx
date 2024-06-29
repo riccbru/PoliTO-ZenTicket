@@ -54,7 +54,7 @@ function LoginForm(props) {
                             </Form.Group>
 
                             <div className='d-flex justify-content-center'>
-                                <Button className='my-button mt-3' type='submit'>LOGIN</Button>
+                                <Button style={{width: '100px'}} className='my-button mt-3' type='submit'><b>LOGIN</b></Button>
                             </div>
                             <p></p>
                             <div className='d-flex justify-content-center'>or</div>
