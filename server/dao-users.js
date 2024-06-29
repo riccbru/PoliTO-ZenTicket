@@ -36,7 +36,7 @@ exports.checkUser = (uname, passwd) => {
                     admin: row.admin,
                     username: row.username
                 }
-                crypto.scrypt(passwd, row.salt, 32, function (err, hash) {
+                crypto.scrypt(passwd, row.salt, 64, function (err, hash) {
                     if (err) reject(err);
                     if (!crypto.timingSafeEqual(Buffer.from(row.hash, 'hex'), hash)) {
                         resolve(false);

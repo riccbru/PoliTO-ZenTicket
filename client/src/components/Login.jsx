@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Alert, Card, Col, Row } from 'react-bootstrap';
+import { Form, Button, Alert, Card, Col, OverlayTrigger, Tooltip, Row } from 'react-bootstrap';
 
 function LoginForm(props) {
 
@@ -73,18 +73,22 @@ function LoginForm(props) {
 
 function LoginButton() {
     const navigate = useNavigate();
-    return(
-        <Button className='my-button' style={{fontSize: '22px'}} onClick={() => navigate("/login")}>
-            <i className='bi bi-box-arrow-left mx-1'></i>
+    return (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip id='login'>LOGIN</Tooltip>}>
+        <Button className="my-button" style={{ fontSize: "22px" }} onClick={() => navigate("/login")}>
+          <i className="bi bi-box-arrow-left mx-1"></i>
         </Button>
+      </OverlayTrigger>
     );
 }
 
 function LogoutButton(props) {
-    return(
-        <Button className='my-button' style={{fontSize: '22px'}} onClick={props.logout}>
-            <i className='bi bi-box-arrow-right mx-1'></i>
+    return (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip id="logout">LOGOUT</Tooltip>}>
+        <Button className="my-button" style={{ fontSize: "22px" }} onClick={props.logout}>
+          <i className="bi bi-box-arrow-right mx-1"></i>
         </Button>
+      </OverlayTrigger>
     );
 }
 

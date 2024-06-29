@@ -1,7 +1,7 @@
 import api from '../api';
-import {useState} from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Alert, Button, Form, Modal, Table} from 'react-bootstrap';
+import { Alert, Button, Form, Modal, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
 
 function TicketAdd(props) {
 
@@ -100,10 +100,13 @@ function TicketAdd(props) {
                 <Form.Control as='textarea' className='add-content' style={{width: '800px'}}
                             type='text' placeholder='Ticket Content' onChange={e => { setContent(e.target.value); setErrMex(''); }} />
             </Form.Group>
-                <div className='d-flex justify-content-begin'>
-                    <Button className='my-button mt-3' type='submit'>ADD TICKET</Button>
+            <div className='d-flex justify-content-between align-items-center mt-3'>
+                <div className='d-flex align-items-center'>
+                    <Button className='my-button mt-3' type='submit'><b>ADD TICKET</b></Button>
                 </div>
-                <Button className='mt-3' variant='danger' onClick={() => navigate("/")}>CANCEL</Button>
+                <div className='d-flex align-items-center'></div>
+                    <Button className='mt-3' variant='danger' onClick={() => navigate("/")}><b>CANCEL</b></Button>
+                </div>
         </Form>
 
             <Modal show={modal} onHide={handleCancel} backdrop='static' keyboard={false}>
@@ -114,22 +117,24 @@ function TicketAdd(props) {
 
                     <Table borderless>
                         <thead><tr><th>Category:</th></tr></thead>
-                        <tbody><tr><td>{category}</td></tr></tbody>
+                        <tbody><tr><td>{category.toUpperCase()}</td></tr></tbody>
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Title:</th></tr></thead>
-                        <tbody><tr><td style={{wordBreak: 'break-word'}}>{title}</td></tr></tbody>
+                        <tbody><tr><td style={{wordBreak: 'break-word'}}>{title.charAt(0).toUpperCase() + title.slice(1)}</td></tr></tbody>
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Content:</th></tr></thead>
-                        <tbody><tr><td style={{wordBreak: 'break-word', whiteSpace: 'pre-line'}}>{content}</td></tr></tbody>
+                        <tbody><tr><td style={{wordBreak: 'break-word', whiteSpace: 'pre-line'}}>{content.charAt(0).toUpperCase() + content.slice(1)}</td></tr></tbody>
                     </Table>
                     <Table borderless>
-                        <thead><tr><th>From user:</th></tr></thead>
+                        <thead><tr><th>User:</th></tr></thead>
                         <tbody><tr><td>{beautyName(props.user)}</td></tr></tbody>
                     </Table>
                     <Table borderless>
-                        <thead><tr><th>ETA</th></tr></thead>
+                        <OverlayTrigger placement='left' overlay={<Tooltip id='ETA-modal'>Estimated Time of Arrival</Tooltip>}>
+                            <thead><tr><th>ETA:</th></tr></thead>
+                        </OverlayTrigger>
                         <tbody><tr><td>{estimation}</td></tr></tbody>
                     </Table>
                     
@@ -137,10 +142,10 @@ function TicketAdd(props) {
                 <Modal.Footer style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
                     <div className='w-100 d-flex justify-content-between align-items-center py-2'>
                     <div className='d-flex align-items-center'>
-                    <Button variant='danger' onClick={handleCancel}>CANCEL</Button>
+                    <Button variant='danger' onClick={handleCancel}><b>CANCEL</b></Button>
                     </div>
                     <div className='d-flex align-items-center'>
-                    <Button className='my-button' onClick={handleConfirm}>CONFIRM</Button>
+                    <Button className='my-button' onClick={handleConfirm}><b>CONFIRM</b></Button>
                     </div>
                     </div>
                 </Modal.Footer>

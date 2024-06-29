@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Badge, Button, Card, Form, ProgressBar, Table } from 'react-bootstrap';
+import { Alert, Badge, Button, Card, Form, ProgressBar, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
 
 function TicketsTable(props) {
 
@@ -21,9 +21,9 @@ function TicketsTable(props) {
                     <th className="text-center"><h4><b>STATUS</b></h4></th>
                     <th colSpan={2}><h4><b>TITLE</b></h4></th>
                     <th><h4><b>AUTHOR</b></h4></th>
-                    <th className="text-center"><h4><b>TIME</b></h4></th>
+                    <OverlayTrigger placement='top' overlay={<Tooltip id='TIME-th'>Time elapsed since ticket submission</Tooltip>}><th className="text-center"><h4><b>TIME</b></h4></th></OverlayTrigger>
                     <th colSpan={2} className="text-center"><h4><b>CATEGORY</b></h4></th>
-                    {!admin ? null : <th className="text-center"><h4><b>ETA</b></h4></th>}
+                    {!admin ? null : <OverlayTrigger placement='top' overlay={<Tooltip id='ETA-th'>Estimated Time of Arrival</Tooltip>}><th className="text-center"><h4><b>ETA</b></h4></th></OverlayTrigger>}
                 </tr>
             </thead>
             <tbody>
@@ -164,13 +164,13 @@ function TicketRow(props) {
             <tr className='clickable-row' onClick={handleClick}>
                 <td className="text-center">
                     {(admin || (status && ticketData.author_id === uid)) ?
-                        <Button style={{width: '80px', color: '#fefefe', backgroundColor: '#7f4af6'}} onClick={changeState}>
-                            {status ? <b>CLOSE</b> : <b>OPEN</b>}
-                            </Button>
+                        <OverlayTrigger placement='bottom' overlay={<Tooltip id="checkbox-tooltip">{status ? 'Close ticket' : 'Re-open ticket'}</Tooltip>}>
+                            <Form.Check className='mt-2' checked={!status} onClick={changeState}></Form.Check>
+                        </OverlayTrigger>
                         : null}
                 </td>
                 <td className="text-center">
-                    <Button style={{width: '80px', fontSize: '20px'}} className='my-button'><b>{'#' + id}</b></Button>
+                    <Button style={{width: '70px', fontSize: '18px'}} className='my-button'><b>{'#' + id}</b></Button>
                 </td>
                 <td className="text-center">
                     {status ?
@@ -186,7 +186,11 @@ function TicketRow(props) {
                 </td>
                 {!admin ? null
                 : <td className='text-center'>{admin && status ? <Badge pill style={{fontSize: '17px'}} variant='info'>{stat?.estimation}</Badge> : null}
-                {admin && status ? <ProgressBar animated variant={variantFun(String(stat?.estimation))} className='mt-2' now={status ? pgvalue(String(stat?.estimation)) : 100} /> : null }
+                {admin && status ?
+                    <OverlayTrigger placement='bottom' overlay={<Tooltip id='progressbar'>{pgvalue(String(stat?.estimation)) < 100 ? Math.round(pgvalue(String(stat?.estimation))) + ' %' : 'ETA delayed'}</Tooltip>}>
+                        <ProgressBar animated variant={variantFun(String(stat?.estimation))} className='mt-2' now={status ? pgvalue(String(stat?.estimation)) : 100} />
+                    </OverlayTrigger>
+                : null}
                 </td>} 
                 {!admin ? <td></td> : null}
             </tr>
@@ -223,10 +227,12 @@ function CategoryDropdown({ tid, setShow, category, refresh }) {
     }
 
     return(
-        <Form.Select style={{width: '230px'}} className='my-button text-center' title={currentCategory} onChange={handleChange}>
+        <OverlayTrigger placement='top' overlay={<Tooltip id='category'>Category change dropdown</Tooltip>}>
+            <Form.Select style={{width: '230px'}} className='my-button text-center' title={currentCategory} onChange={handleChange}>
             <option key={1} value={currentCategory}>{currentCategory.toUpperCase()}</option>
             {['administrative', 'inquiry', 'maintenance', 'new feature', 'payment'].filter( c => currentCategory !== c).map((cat, index) => <option key={index} value={cat}>{cat.toUpperCase()}</option>)}
         </Form.Select>
+        </OverlayTrigger>
     );
 }
 
@@ -351,13 +357,13 @@ function BlockContentRow({ author, date, content }) {
         <>
                 <td></td>
                 <td colSpan={2}>
-                    <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
+                    <Card borderless style={{ color: '#fefeff', border: '#002c49', backgroundColor: '#002c49' }}>
                         <Card.Body><b>{author && beautyAuthor(author)}</b></Card.Body>
                         <Card.Body style={{color: '#6c757d'}}><b>{date && beautyDate(date)}</b></Card.Body>
                     </Card>
                 </td>
                 <td colSpan={6} className='ticket-content'>
-                    <Card border='dark' style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
+                    <Card style={{ color: '#fefeff', border: '#002c49', backgroundColor: '#002c49' }}>
                         <Card.Body>
                         {content?.split('\n').map((e, index) => (
                             <React.Fragment key={index}>
