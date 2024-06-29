@@ -52,9 +52,9 @@ function TicketAdd(props) {
                                 .then(r => {
                                     setEstimation(r[0].estimation);
                                 })
-                                .catch(err => {});
+                                .catch(() => {});
                         })
-                        .catch(err => {});
+                        .catch(() => {});
                 });
         }
     } 

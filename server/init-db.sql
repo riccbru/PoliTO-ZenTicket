@@ -44,9 +44,12 @@ INSERT INTO "tickets" ("state", "title", "author_id", "category", "submission_ti
 INSERT INTO "tickets" ("state", "title", "author_id", "category", "submission_time", "content") VALUES(0, 'Crypto Exam', 2, 'inquiry', 1717952845, 'Should I be severe in first Cryptography exam on 07/01/24?');
 
 INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(6, 3, 1717952846, 'Yes, cryptography is essential. These students are going to be the next SISR spies!!!');
-INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(6, 1, 1717952847, 'We already issued a lot of CTFs during the semester.\nI would say to go easy on them...');
+INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(6, 1, 1717952847, 'We already issued a lot of CTFs during the semester.
+I would say to go easy on them...');
 INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(6, 4, 1717952848, 'The deadline for WebApp submission is 3 days before your exam. I am not sure they can be ready in 3 days.');
-INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(5, 1, 1717952849, 'Sorry Enrico I was conducting some PT & VA with pwnthem0le on your Web App. We are backing it up as we speak!');
+INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(5, 1, 1717952849, 'Sorry Enrico I was conducting some PT & VA with pwnthem0le on your Web App.
+
+We are backing it up as we speak!');
 INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(3, 6, 1717952850, 'Are you crazy? I am not doing a camurria to a colleague');
 INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(3, 4, 1717952851, 'I hope you did not drink that much to forget I paid you beers in cash');
 INSERT INTO "blocks" ("ticket_id", "author_id", "creation_time", "content") VALUES(3, 5, 1717952852, 'I was speaking to a PhD student I met at the pub. Not my business');

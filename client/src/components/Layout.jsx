@@ -21,16 +21,13 @@ function TableLayout(props) {
   }, []);
 
   const parseTickets = (tickets) => {
-    const parsed = tickets.map(
-      ({
-        state,
-        author_id,
-        ticket_author_username,
-        submission_time,
-        content,
-        ...rest
-      }) => rest
-    );
+    const parsed = tickets.map(ticket => {
+      return {
+        ticket_id: ticket.ticket_id,
+        title: ticket.title,
+        category: ticket.category
+      }
+    });
     return parsed;
   };
 
@@ -42,7 +39,7 @@ function TableLayout(props) {
           .then((stats) => {
             props.setStats(stats);
           })
-          .catch((err) => {
+          .catch(() => {
             api.getAuthToken().then((resp) => props.setAuthToken(resp.token));
           });
       }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Alert, Card, Col, Row, Container } from 'react-bootstrap';
+import { Form, Button, Alert, Card, Col, Row } from 'react-bootstrap';
 
 function LoginForm(props) {
+
+    const {login} = props;
 
     const navigate = useNavigate();
         
@@ -19,7 +21,7 @@ function LoginForm(props) {
       } else if (!password) {
         setErrMex('Password cannot be empty');
       } else {
-        props.login(credentials)
+        login(credentials)
           .then( () => navigate( "/" ) )
           .catch((err) => { 
             setErrMex(err.error); 
@@ -69,11 +71,11 @@ function LoginForm(props) {
     );
 }
 
-function LoginButton(props) {
+function LoginButton() {
     const navigate = useNavigate();
     return(
         <Button className='my-button' style={{fontSize: '22px'}} onClick={() => navigate("/login")}>
-            <i class='bi bi-box-arrow-left mx-1'></i>
+            <i className='bi bi-box-arrow-left mx-1'></i>
         </Button>
     );
 }
@@ -81,7 +83,7 @@ function LoginButton(props) {
 function LogoutButton(props) {
     return(
         <Button className='my-button' style={{fontSize: '22px'}} onClick={props.logout}>
-            <i class='bi bi-box-arrow-right mx-1'></i>
+            <i className='bi bi-box-arrow-right mx-1'></i>
         </Button>
     );
 }

@@ -1,29 +1,6 @@
 'use strict';
 
-import dayjs from 'dayjs';
-
 const SERVER_URL = 'http://localhost:3001';
-
-const timeElapsed = (timestamp) => {
-    // 'DD MMMM YYYY, HH:mm:ss'
-    const now = dayjs().unix();
-    const secElapsed = now - timestamp;
-
-    const seconds = secElapsed % 60;
-    const minutes = Math.floor((secElapsed % 3600) / 60);
-    const hours = Math.floor((secElapsed % 86400) / 3600);
-    const days = Math.floor(secElapsed / 86400);
-
-    if (days > 0) {
-        return `${days}d ${hours}h`;
-    } else if (hours > 0) {
-        return `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
-        return `${minutes}m ${seconds}s`;
-    } else {
-        return `${seconds}s`;
-    }
-}
 
 function getJSON(httpResponsePromise) {
     return new Promise((resolve, reject) => {
@@ -32,11 +9,11 @@ function getJSON(httpResponsePromise) {
                 if (response.ok) {
                     response.json()
                         .then(json => resolve(json))
-                        .catch(err => reject({ error: `Cannot parse server response ok-catch` }))
+                        .catch(err => reject({ error: `Cannot parse server response ok-catch:\n${err}` }))
                 } else {
                     response.json()
                         .then(obj => reject(obj))
-                        .catch(err => reject({ error: `Cannot parse server response !ok-catch` }))
+                        .catch(err => reject({ error: `Cannot parse server response !ok-catch:\n${err}` }))
                 }
             })
             .catch(err =>
@@ -45,7 +22,7 @@ function getJSON(httpResponsePromise) {
     });
 }
 
-const getTickets = async (tid) => {
+const getTickets = async () => {
     return getJSON(fetch(SERVER_URL + '/api/tickets', {credentials: 'include'}))
         .then(tickets => {
             return tickets.map(t => {
@@ -62,7 +39,7 @@ const getTickets = async (tid) => {
                 return ticket;
             })
     })
-    .catch((err) => { console.log(err) });
+    .catch((err) => { throw err; });
 }
 
 function addTicket(ticket) {

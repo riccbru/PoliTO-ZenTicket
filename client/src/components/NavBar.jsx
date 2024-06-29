@@ -31,8 +31,8 @@ function NavBar(props) {
                     : <Navbar.Text className={'mx-1'} style={{color: '#808080', fontSize: '20px'}}>{beautyName(props.user)}</Navbar.Text>}
 
                     {props.loggedIn ?
-                    <i class='bi bi-person-fill my-icon mx-3'></i>
-                    : <i class='bi bi-person my-icon mx-3'></i>}
+                    <i className='bi bi-person-fill my-icon mx-3'></i>
+                    : <i className='bi bi-person my-icon mx-3'></i>}
 
                     {!props.loggedIn ?
                     <LoginButton />

@@ -64,16 +64,12 @@ function AppRouted() {
   }
 
   const handleLogin = async (credentials) => {
-    try {
-      const user = await api.login(credentials);
-      setLoggedIn(true);
-      setUID(user.id);
-      setAdmin(user.admin);
-      setUser(user.username);
-      renewToken();
-    } catch(err) {
-      throw err;
-    }
+    const user = await api.login(credentials);
+    setLoggedIn(true);
+    setUID(user.id);
+    setAdmin(user.admin);
+    setUser(user.username);
+    renewToken();
   }
 
   const handleLogout = async () => {
