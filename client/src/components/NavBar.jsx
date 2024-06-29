@@ -7,10 +7,12 @@ function NavBar(props) {
 
     const beautyName = (uname) => {
         if (uname) {
-          const words = uname.split('_');
-          const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-          const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
-          return `${name} ${surname}`;
+            let out = '';
+            const words = uname.split('_');
+            words.map(e => {
+                out += e.charAt(0).toUpperCase() + e.slice(1) + ' ';
+            })
+            return out;
         } else { return null; }
     }
 

@@ -23,7 +23,7 @@ function TicketsTable(props) {
                     <th><h4><b>AUTHOR</b></h4></th>
                     <th className="text-center"><h4><b>TIME</b></h4></th>
                     <th colSpan={2} className="text-center"><h4><b>CATEGORY</b></h4></th>
-                    {(!admin || !loggedIn) ? null : <th className="text-center"><h4><b>ETA</b></h4></th>}
+                    {!admin ? null : <th className="text-center"><h4><b>ETA</b></h4></th>}
                 </tr>
             </thead>
             <tbody>
@@ -74,11 +74,15 @@ function TicketRow(props) {
         return `${cat.toUpperCase()}`;
     }
 
-    const beautyName = (username) => {
-        const words = username.split('_');
-        const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-        const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
-        return `${name} ${surname}`;
+    const beautyName = (uname) => {
+        if (uname) {
+            let out = '';
+            const words = uname.split('_');
+            words.map(e => {
+                out += e.charAt(0).toUpperCase() + e.slice(1) + ' ';
+            })
+            return out;
+        } else { return null; }
     }
 
     const handleClick = (event) => {
@@ -240,16 +244,19 @@ function TicketContentRow(props) {
 
     const { uid, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks, addBlock, setUpdate } = props;
     
-    const navigate = useNavigate();
     const formRef = useRef(null);
     const [errMex, setErrMex] = useState('');
     const [newblockcontent, setNewBlockContent] = useState(null);
 
-    const beautyAuthor = (author) => {
-        const words = author.split('_');
-        const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-        const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
-        return `${name} ${surname}`;
+    const beautyAuthor = (uname) => {
+        if (uname) {
+            let out = '';
+            const words = uname.split('_');
+            words.map(e => {
+                out += e.charAt(0).toUpperCase() + e.slice(1) + ' ';
+            })
+            return out;
+        } else { return null; }
     }
 
     const beautyDate = (date) => {
@@ -334,11 +341,15 @@ function TicketContentRow(props) {
 
 function BlockContentRow({ author, date, content }) {
 
-    const beautyAuthor = (author) => {
-        const words = author.split('_');
-        const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-        const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
-        return `${name} ${surname}`;
+    const beautyAuthor = (uname) => {
+        if (uname) {
+            let out = '';
+            const words = uname.split('_');
+            words.map(e => {
+                out += e.charAt(0).toUpperCase() + e.slice(1) + ' ';
+            })
+            return out;
+        } else { return null; }
     }
 
     const beautyDate = (date) => {

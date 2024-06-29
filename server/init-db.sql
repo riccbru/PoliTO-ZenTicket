@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS "blocks" (
 );
 
 INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(1, "cataldo_basile", "6ac5bf85b4597f20ef3b602065b4afd6427aa97c868e6798077cb6bffaf68683", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(0, "antonio_discala", "45d3ffae800f6807896a512c8498171f31eae86a9937b1a353b3e5d112e9ac39", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(0, "antonio_di_scala", "45d3ffae800f6807896a512c8498171f31eae86a9937b1a353b3e5d112e9ac39", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(1, "antonio_lioy", "b6ec70ff46b0f12648755758854a771a70b8d90a5f1d5109d3bf78645a8224cb", "cccccccccccccccccccccccccccccccc");
 INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(1, "enrico_masala", "b76b234366a2836c62e6469fe8aa0c7c4bc24f951b1399d397f2198c4f7df7bd", "dddddddddddddddddddddddddddddddd");
 INSERT INTO "users" ("admin", "username", "hash", "salt") VALUES(0, "marco_mellia", "a434bf51cbf4753f09023a66967871d160513523e7c47464e59ec95c916f76f8", "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
