@@ -20,10 +20,12 @@ const expireTime = 10;
 const maxTitleLength = 60;
 const maxContentLength = 240;
 const jwtSecret = 'qTX6walIEr47p7iXtTgLxDTXJRZYDC9egFjGLIn0rRiahB4T24T4d5f59CtyQmH8';
+
 const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
 };
+
 const sessionOptions = {
   secret: "WEBAPP24{mys3cr3t!!}",
   resave: false,
@@ -31,7 +33,6 @@ const sessionOptions = {
   cookie: { httpOnly: true, secure: app.get('env') === 'production' ? true : false },
 };
 
-// INIT express
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors(corsOptions));
@@ -128,6 +129,10 @@ app.get('/api',
     res.send(text);
 });
 
+/***************/
+/*** TICKETS ***/
+/***************/
+
 app.get('/api/tickets/',
   (req, res) => {
     ticketDao.getTickets(req.params.tid)
@@ -142,29 +147,29 @@ app.get('/api/tickets/',
       .catch((err) => res.status(500).json(err));
 });
 
-app.get('/api/tickets/:tid',
-  [check('tid').isInt({ min: 1 })],
-  async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(errors.errors);
-    }
-    try {
-      const result = await ticketDao.getTickets(req.params.tid);
-      if (result.error) { res.status(404).json(result); }
-      if (!req.isAuthenticated()) {
-        const allowed = result.map(({ content, ...rest }) => rest);
-        res.json(allowed);
-      } else {
-        const rendered = result.map(t => {
-          t.content.replce(/\n/g, '<br>');
-        });
-        res.json(rendered);
-      }
-    } catch (err) {
-      res.status(500).send({error: err});
-    }
-});
+// app.get('/api/tickets/:tid',
+//   [check('tid').isInt({ min: 1 })],
+//   async (req, res) => {
+//     const errors = validationResult(req).formatWith(errorFormatter);
+//     if (!errors.isEmpty()) {
+//       return res.status(422).json(errors.errors);
+//     }
+//     try {
+//       const result = await ticketDao.getTickets(req.params.tid);
+//       if (result.error) { res.status(404).json(result); }
+//       if (!req.isAuthenticated()) {
+//         const allowed = result.map(({ content, ...rest }) => rest);
+//         res.json(allowed);
+//       } else {
+//         const rendered = result.map(t => {
+//           t.content.replce(/\n/g, '<br>');
+//         });
+//         res.json(rendered);
+//       }
+//     } catch (err) {
+//       res.status(500).send({error: err});
+//     }
+// });
 
 app.post('/api/tickets', isLoggedIn,
   [
@@ -259,16 +264,9 @@ app.patch('/api/tickets/:tid', isAdmin,
     }
 });
 
-app.delete('/api/tickets/:tid', 
-  [check('tid').isInt({ min: 1 })],
-  async (req, res) => {
-    try {
-      const changes = await ticketDao.deleteTicket(req.params.tid);
-      res.status(200).json(changes);
-    } catch (err) {
-      res.status(503).json({ error: `${err}` });
-    }
-});
+/**************/
+/*** BLOCKS ***/
+/**************/
 
 app.get('/api/blocks/:tid', isLoggedIn,
 [check('tid').isInt({min: 1})],
@@ -282,11 +280,8 @@ app.get('/api/blocks/:tid', isLoggedIn,
       if (result.error)
         res.status(404).json(result);
       else {
-        // if (req.isAuthenticated()) {
           res.json(result);
-        // } else { res.status(401).json({error: 'Not authorized'}) }
       }
-        // res.json(result);
     } catch (err) {
       res.status(500).send();
     }
@@ -304,10 +299,8 @@ app.post('/api/blocks', isLoggedIn,
     }
 
     if (req.body.author_id === req.user.id) {
-      // console.log(req.body.ticket_id);
       const result = await ticketDao.getTickets(req.body.tid);
       if (result.length === 0) {console.log("captured");}
-      // console.log(result);
   
       if (result.error) { res.status(404).json(result); }
 
@@ -317,7 +310,6 @@ app.post('/api/blocks', isLoggedIn,
         creation_time: dayjs().unix(),
         content: req.body.content
       }
-      // console.log(block);
       try {
         const result = await ticketDao.addBlock(block);
         res.json(result);
@@ -327,39 +319,9 @@ app.post('/api/blocks', isLoggedIn,
     } else {return res.status(403).json({error: "Forbidden"})}
 });
 
-app.delete('/api/blocks/:bid',
-  [check('bid').isInt({ min: 1 })],
-  async (req, res) => {
-    try {
-      const changes = await ticketDao.deleteBlock(req.params.bid);
-      res.status(200).json(changes);
-    } catch (err) {
-      res.status(503).json({ error: `${err}` });
-    }
-});
-
 /******************/
 /*** AuthN APIs ***/
 /******************/
-
-// app.get('/api/users/:uid',
-//   [check('uid').isInt({ min: 1 })],
-//   async (req, res) => {
-//     const errors = validationResult(req).formatWith(errorFormatter);
-//     if (!errors.isEmpty()) {
-//       return res.status(422).json( errors.errors );
-//     }
-//     try {
-//       const result = await userDao.getUser(req.params.uid);
-//       if (result.error) {
-//         res.status(404).json(result);
-//       } else {
-//         res.json(result);
-//       }
-//     } catch (err) {
-//       res.status(500).send();
-//     }
-// });
 
 app.post('/api/sessions',
   function (req, res, next) {

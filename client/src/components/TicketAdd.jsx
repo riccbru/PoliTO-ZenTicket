@@ -40,7 +40,7 @@ function TicketAdd(props) {
             setErrMex('Content is too long');
         } else {
             setModal(true);
-            const input = [{"title": title, "category": category}];
+            const input = [{"title": title, "category": category, "state": 1}];
             api.getStats(props.authToken, input)
                 .then(res => {
                     setEstimation(res[0].estimation);
@@ -67,8 +67,6 @@ function TicketAdd(props) {
             "content": content,
         }
         props.addTicket(ticket);
-        // console.log(ticket);
-        // navigate("/");
     }
 
     const handleCancel = () => {
@@ -77,12 +75,12 @@ function TicketAdd(props) {
     
     return(
         <>
-        <h3 style={{color: '#fefeff'}}>ADD TICKET</h3>
+        <h3 style={{color: '#fefeff'}}>ADD NEW TICKET</h3>
         <p></p>
         {errMex ? <Alert variant='danger' onClose={() => setErrMex('')}>{errMex}</Alert> : null}
         <Form onSubmit={handleSubmit}>
         <Form.Group>
-                <Form.Label>Category</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}>CATEGORY</Form.Label>
                 <Form.Select style={{width: '200px'}} onChange={e => { setCategory(e.target.value); setErrMex(''); }}>
                     <option value='category'>Category</option>
                     <option value='administrative'>Administrative</option>
@@ -93,12 +91,12 @@ function TicketAdd(props) {
                 </Form.Select>
             </Form.Group>
             <Form.Group>
-                <Form.Label>Title</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}>TITLE</Form.Label>
                 <Form.Control style={{width: '669px'}} type='title' placeholder='Title'
-                            onChange={e => setTitle(e.target.value)} />
+                            onChange={e => {setTitle(e.target.value); setErrMex('');}} />
             </Form.Group>
             <Form.Group>
-                <Form.Label>Ticket Content</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}>TICKET CONTENT</Form.Label>
                 <Form.Control as='textarea' className='add-content' style={{width: '800px'}}
                             type='text' placeholder='Ticket Content' onChange={e => { setContent(e.target.value); setErrMex(''); }} />
             </Form.Group>
@@ -124,7 +122,7 @@ function TicketAdd(props) {
                     </Table>
                     <Table borderless>
                         <thead><tr><th>Content:</th></tr></thead>
-                        <tbody><tr><td style={{wordBreak: 'break-word'}}>{content}</td></tr></tbody>
+                        <tbody><tr><td style={{wordBreak: 'break-word', whiteSpace: 'pre-line'}}>{content}</td></tr></tbody>
                     </Table>
                     <Table borderless>
                         <thead><tr><th>From user:</th></tr></thead>
@@ -137,8 +135,14 @@ function TicketAdd(props) {
                     
                 </Modal.Body>
                 <Modal.Footer style={{ color: '#fefeff', backgroundColor: '#002c49' }}>
-                    <Button className='my-button' onClick={handleConfirm}>CONFIRM</Button>
+                    <div className='w-100 d-flex justify-content-between align-items-center py-2'>
+                    <div className='d-flex align-items-center'>
                     <Button variant='danger' onClick={handleCancel}>CANCEL</Button>
+                    </div>
+                    <div className='d-flex align-items-center'>
+                    <Button className='my-button' onClick={handleConfirm}>CONFIRM</Button>
+                    </div>
+                    </div>
                 </Modal.Footer>
             </Modal>
         </>

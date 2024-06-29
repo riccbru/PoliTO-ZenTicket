@@ -1,8 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import api from '../api';
 import dayjs from 'dayjs';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Badge, Button, Card, Form, ProgressBar, Table } from 'react-bootstrap';
 
@@ -70,7 +70,6 @@ function TicketRow(props) {
     }
 
     const beautyCategory = (cat) => {
-        // return `${cat.charAt(0).toUpperCase() + cat.slice(1)}`; (Inquiry)
         return `${cat.toUpperCase()}`;
     }
 
@@ -140,15 +139,8 @@ function TicketRow(props) {
     const variantFun = (eta) => {
       const pg = pgvalue(eta);
       let out = "";
-      if (status) {
-        if (pg < 100) {
-          out = "warning";
-        } else {
-          out = "danger";
-        }
-      } else {
-        out = "success";
-      }
+      if (status) { pg < 100 ? out = 'warning' : out = 'danger' }
+      else { out = "success"; }
       return out;
     };
 
@@ -182,8 +174,6 @@ function TicketRow(props) {
                 </td>
                 <td className="text-center">
                     {status ?
-                    // <Button style={{width: '90px'}} variant="success"><b>OPEN</b></Button>
-                    // : <Button style={{width: '90px'}} variant="danger"><b>CLOSED</b></Button>}
                     <b style={{color: '#ffc108'}}><h5>OPEN</h5></b>
                     : <b style={{color: '#808080'}}><h5>CLOSED</h5></b>}
                 </td>
