@@ -16,14 +16,14 @@ function TicketsTable(props) {
         <Table borderless className='ticket-table' hover>
             <thead>
                 <tr>
-                    <th className="text-center"><Button style={{width: '80px'}} className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}>&#43;</Button></th>
-                    <th className="text-center">TICKET ID</th>
-                    <th className="text-center">STATUS</th>
-                    <th colSpan={2}>TITLE</th>
-                    <th>AUTHOR</th>
-                    <th className="text-center">SUBMISSION</th>
-                    <th colSpan={2} className="text-center">CATEGORY</th>
-                    {(!admin || !loggedIn) ? null : <th className="text-center">ETA</th>}
+                    <th className="text-center"><Button style={{width: '80px'}} className='my-button' onClick={() => {loggedIn ? navigate('/add') : navigate('/login')}}><b style={{fontSize: '20px'}}>&#43;</b></Button></th>
+                    <th className="text-center"><h4><b>ID</b></h4></th>
+                    <th className="text-center"><h4><b>STATUS</b></h4></th>
+                    <th colSpan={2}><h4><b>TITLE</b></h4></th>
+                    <th><h4><b>AUTHOR</b></h4></th>
+                    <th className="text-center"><h4><b>TIME</b></h4></th>
+                    <th colSpan={2} className="text-center"><h4><b>CATEGORY</b></h4></th>
+                    {(!admin || !loggedIn) ? null : <th className="text-center"><h4><b>ETA</b></h4></th>}
                 </tr>
             </thead>
             <tbody>
@@ -55,16 +55,18 @@ function TicketRow(props) {
         const minutes = Math.floor((secElapsed % 3600) / 60);
         const hours = Math.floor((secElapsed % 86400) / 3600);
         const days = Math.floor(secElapsed / 86400);
-    
+
+        let out = '';
         if (days > 0) {
-            return `${days}d ${hours}h`;
+            out = `${days}d ${hours}h`;
         } else if (hours > 0) {
-            return `${hours}h ${minutes}m`;
+            out = `${hours}h ${minutes}m`;
         } else if (minutes > 0) {
-            return `${minutes}m ${seconds}s`;
+            out = `${minutes}m ${seconds}s`;
         } else {
-            return `${seconds}s`;
+            out = `${seconds}s`;
         }
+        return out;
     }
 
     const beautyCategory = (cat) => {
@@ -77,11 +79,6 @@ function TicketRow(props) {
         const name = words[0].charAt(0).toUpperCase() + words[0].slice(1);
         const surname = words[1].charAt(0).toUpperCase() + words[1].slice(1);
         return `${name} ${surname}`;
-    }
-
-    const beautyDate = (date) => {
-        const sub_date = dayjs.unix(date).format('on D MMMM YYYY [at] HH:mm:ss');
-        return sub_date;
     }
 
     const handleClick = (event) => {
@@ -177,16 +174,18 @@ function TicketRow(props) {
                         : null}
                 </td>
                 <td className="text-center">
-                    <Button style={{width: '80px'}} className='my-button'>{'#' + id}</Button>
+                    <Button style={{width: '80px', fontSize: '20px'}} className='my-button'><b>{'#' + id}</b></Button>
                 </td>
                 <td className="text-center">
                     {status ?
-                    <Button style={{width: '90px'}} variant="success"><b>OPEN</b></Button>
-                    : <Button style={{width: '90px'}} variant="danger"><b>CLOSED</b></Button>}
+                    // <Button style={{width: '90px'}} variant="success"><b>OPEN</b></Button>
+                    // : <Button style={{width: '90px'}} variant="danger"><b>CLOSED</b></Button>}
+                    <b style={{color: '#ffc108'}}><h5>OPEN</h5></b>
+                    : <b style={{color: '#808080'}}><h5>CLOSED</h5></b>}
                 </td>
                 <td colSpan={2}><b>{ticketData.title}</b></td>
                 <td>{ticketData.ticket_author_username && beautyName(ticketData.ticket_author_username)}</td>
-                <td className="text-center"><Button className='my-button-info'>{timeElapsed(ticketData.submission_time)}</Button></td>
+                <td className="text-center"><Button className='my-button-info'><b>{timeElapsed(ticketData.submission_time)}</b></Button></td>
                 <td colSpan={2} className="text-center">
                     {!admin ? beautyCategory(ticketData.category)
                     : <CategoryDropdown tid={id} show={show} setShow={setShow} setTickets={props.setTickets} title={ticketData.title} category={ticketData.category} refresh={props.refresh}/>}
@@ -207,7 +206,7 @@ function TicketRow(props) {
     );
 }
 
-function CategoryDropdown({ tid, show, setShow, setUpdate, category, refresh }) {
+function CategoryDropdown({ tid, setShow, category, refresh }) {
 
     const [currentCategory, setCurrentCategory] = useState(category);
 
@@ -239,7 +238,7 @@ function CategoryDropdown({ tid, show, setShow, setUpdate, category, refresh }) 
 
 function TicketContentRow(props) {
 
-    const { uid, user, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks, addBlock, update, setUpdate } = props;
+    const { uid, tid, status, ticket_title, ticket_author, ticket_date, ticket_content, blocks, addBlock, setUpdate } = props;
     
     const navigate = useNavigate();
     const formRef = useRef(null);

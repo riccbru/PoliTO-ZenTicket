@@ -1,14 +1,10 @@
 import api from "../api";
-import { useEffect, useState } from "react";
-import TicketsTable from "./Tickets";
 import { NavBar } from "./NavBar";
-import { LoginForm } from "./Login";
-import { Outlet, useNavigate } from "react-router-dom";
+import TicketsTable from "./Tickets";
 import { TicketAdd } from "./TicketAdd";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
-
-import dayjs from "dayjs";
-import secElapsed from "../api";
+import { useEffect, useState } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+import { Outlet, useNavigate } from "react-router-dom";
 
 function TableLayout(props) {
 

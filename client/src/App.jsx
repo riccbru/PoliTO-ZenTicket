@@ -1,14 +1,12 @@
 import './App.css'
 import api from './api.js';
-import { useState, useEffect } from 'react'
+import { Container } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { LoginForm } from './components/Login.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { LoginForm } from './components/Login.jsx';
 import { Common, AddLayout, TableLayout, NotFound } from './components/Layout.jsx';
-import { Container, Row, Col, Button, Toast } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { NavBar } from './components/NavBar.jsx';
 
 function App() {
   return (
@@ -18,7 +16,7 @@ function App() {
   );
 }
 
-function AppRouted(props) {
+function AppRouted() {
 
   const navigate = useNavigate();
 
@@ -41,7 +39,7 @@ function AppRouted(props) {
         setUser(user.username);
         api.getAuthToken()
           .then(r => { setAuthToken(r.token) });
-      } catch(err) { }
+      } catch(err) { handleErrors(err); }
     };
     checkAuth();
   }, []);
@@ -57,12 +55,12 @@ function AppRouted(props) {
       msg = err[0].msg + " : " + err[0].path;
     else if (typeof err === "string") msg = String(err);
     else msg = "Unknown Error";
-    console.log(err);
+    // console.log(`handleErrors(App.jsx) - msg:\t${msg}`);
   }
 
   const renewToken = () => {
     api.getAuthToken().then((resp) => { setAuthToken(resp.token); } )
-    .catch(err => {console.log("DEBUG: renewToken err: ", err)});
+    .catch(err => { handleErrors(err); });
   }
 
   const handleLogin = async (credentials) => {
