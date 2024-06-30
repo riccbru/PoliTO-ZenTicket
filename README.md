@@ -79,8 +79,8 @@
 
 ## Screenshot
 
-![Screenshot](./img/login.png)
 ![Screenshot](./img/home.png)
+![Screenshot](./img/add.png)
 
 ## Users Credentials
 
