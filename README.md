@@ -86,10 +86,10 @@
 
 ### ADMINS
 - `cataldo_basile`, `passwd`
-- `antonio_lioy`, `passwd`
 - `enrico_masala`, `passwd`
 
 ### USERS
 - `antonio_di_scala`, `passwd`
+- `antonio_lioy`, `passwd`
 - `marco_mellia`, `passwd`
 - `fulvio_valenza`, `passwd`

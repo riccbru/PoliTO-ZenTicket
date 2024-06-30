@@ -80,9 +80,9 @@ function TicketAdd(props) {
         {errMex ? <Alert variant='danger' onClose={() => setErrMex('')}>{errMex}</Alert> : null}
         <Form onSubmit={handleSubmit}>
         <Form.Group>
-                <Form.Label className='mt-3' style={{color: '#fefeff'}}>CATEGORY</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}></Form.Label>
                 <Form.Select style={{width: '200px'}} onChange={e => { setCategory(e.target.value); setErrMex(''); }}>
-                    <option value='category'>Category</option>
+                    <option value='category'>Choose category...</option>
                     <option value='administrative'>Administrative</option>
                     <option value='inquiry'>Inquiry</option>
                     <option value='maintenance'>Maintenance</option>
@@ -91,7 +91,7 @@ function TicketAdd(props) {
                 </Form.Select>
             </Form.Group>
             <Form.Group>
-                <Form.Label className='mt-3' style={{color: '#fefeff'}}>TITLE</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}></Form.Label>
                 <Form.Floating className='mb-3'>
                 <Form.Control id='floatingTitle' style={{width: '669px'}} type='title' placeholder='Title'
                             onChange={e => {setTitle(e.target.value); setErrMex('');}} />
@@ -99,7 +99,7 @@ function TicketAdd(props) {
                 </Form.Floating>
             </Form.Group>
             <Form.Group>
-                <Form.Label className='mt-3' style={{color: '#fefeff'}}>TICKET CONTENT</Form.Label>
+                <Form.Label className='mt-3' style={{color: '#fefeff'}}></Form.Label>
                 <Form.Floating className='mb-3'>
                 <Form.Control id='floatingContent' as='textarea' className='add-content' style={{width: '800px'}}
                             type='text' placeholder='Ticket Content' onChange={e => { setContent(e.target.value); setErrMex(''); }} />
