@@ -96,9 +96,8 @@ function TicketRow(props) {
     }
 
     const changeState = (event) => {
-        // event.preventDefault();
         event.stopPropagation();
-        setShow(false);
+        setShow(true);
         if (status) {
             api.closeTicket(id)
                 .then(result => {
@@ -327,7 +326,10 @@ function TicketContentRow(props) {
                         <Form ref={formRef} onSubmit={handleSubmit}>
                         {errMex ? <Alert variant='danger'>{errMex}</Alert> : null}
                             <Form.Group>
-                                <Form.Control as='textarea' placeholder='Insert answer...' onChange={e => {setNewBlockContent(e.target.value); setErrMex('');}} />
+                                <Form.Floating className='mb-3'>
+                                <Form.Control id='floatingAnswer' as='textarea' placeholder='Insert answer...' onChange={e => {setNewBlockContent(e.target.value); setErrMex('');}} />
+                                    <label style={{color: '#808080'}} htmlFor='floatingAnswer'>Insert answer...</label>
+                                </Form.Floating>
                             </Form.Group>
                         <Form.Group>
                             <div className='text-center mx-3 mt-3'>

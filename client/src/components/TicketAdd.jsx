@@ -92,13 +92,19 @@ function TicketAdd(props) {
             </Form.Group>
             <Form.Group>
                 <Form.Label className='mt-3' style={{color: '#fefeff'}}>TITLE</Form.Label>
-                <Form.Control style={{width: '669px'}} type='title' placeholder='Title'
+                <Form.Floating className='mb-3'>
+                <Form.Control id='floatingTitle' style={{width: '669px'}} type='title' placeholder='Title'
                             onChange={e => {setTitle(e.target.value); setErrMex('');}} />
+                <label htmlFor='floatingTitle'>Insert title...</label>
+                </Form.Floating>
             </Form.Group>
             <Form.Group>
                 <Form.Label className='mt-3' style={{color: '#fefeff'}}>TICKET CONTENT</Form.Label>
-                <Form.Control as='textarea' className='add-content' style={{width: '800px'}}
+                <Form.Floating className='mb-3'>
+                <Form.Control id='floatingContent' as='textarea' className='add-content' style={{width: '800px'}}
                             type='text' placeholder='Ticket Content' onChange={e => { setContent(e.target.value); setErrMex(''); }} />
+                <label htmlFor='floatingContent'>Insert content...</label>
+                </Form.Floating>
             </Form.Group>
             <div className='d-flex justify-content-between align-items-center mt-3'>
                 <div className='d-flex align-items-center'>
