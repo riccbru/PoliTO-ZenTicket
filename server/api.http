@@ -1,0 +1,99 @@
+###
+GET http://localhost:3001/api/sessions/current HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/auth-token HTTP/1.1
+
+###
+
+DELETE http://localhost:3001/api/sessions/current HTTP/1.1
+
+###
+
+POST http://localhost:3001/api/sessions/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "antonio_lioy",
+    "password": "passwd"
+}
+
+###
+
+
+POST http://localhost:3001/api/blocks/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ticket_id": 1,
+    "author_id": 3,
+    "content": "this is a test!\nquesta è una prova!"
+}
+
+###
+
+POST http://localhost:3002/api/tickets-stats
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOjEsInVzZXJJRCI6MywiaWF0IjoxNzE4NTU1MjI1LCJleHAiOjE3MTg1NTUyODV9.LBHltzM33ZoyGU2F9h6M9h0pSxGFcIv25CUe-QrmKHg
+
+{
+    "tickets": [
+        { "ticket_id": 1, "title": "Crypto Exam", "category":"inquiry"},
+        { "ticket_id": 2, "title": "Missing BTC payment", "category": "payment" },
+        { "ticket_id": 3, "title": "PoliTO Network Security", "category": "maintenance" },
+        { "ticket_id": 4, "title": "Mobile App PoliTO", "category": "administrative" },
+        { "ticket_id": 5, "title": "Bug", "category": "new feature" },
+        { "ticket_id": 6, "title": "Deploy App", "category": "inquiry" }
+    ]
+}
+
+###
+
+GET http://localhost:3001/api/tickets/ HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/blocks/10 HTTP/1.1
+
+###
+
+POST http://localhost:3001/api/tickets/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "prova",
+    "author_id": 3,
+    "category": "administrative",
+    "content": "this is a test!\nquesta è una prova!"
+}
+
+###
+
+PATCH http://localhost/api:3001/tickets/open/1 HTTP/1.1
+
+###
+
+PATCH http://localhost:3001/api/tickets/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "category": "inquiry"
+}
+
+###
+
+DELETE http://localhost:3001/api/tickets/100 HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/blocks/1
+
+###
+
+DELETE http://localhost:3001/api/blocks/1 HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/users/2 HTTP/1.1
+
