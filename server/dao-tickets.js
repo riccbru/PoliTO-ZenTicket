@@ -24,7 +24,6 @@ const returnBlock = (block) => {
   b.author = block.block_author_username;
   b.creation_time = block.creation_time;
   b.content = block.content;
-
   return b;
 };
 

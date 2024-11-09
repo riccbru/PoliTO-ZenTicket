@@ -147,30 +147,6 @@ app.get('/api/tickets/',
       .catch((err) => res.status(500).json(err));
 });
 
-// app.get('/api/tickets/:tid',
-//   [check('tid').isInt({ min: 1 })],
-//   async (req, res) => {
-//     const errors = validationResult(req).formatWith(errorFormatter);
-//     if (!errors.isEmpty()) {
-//       return res.status(422).json(errors.errors);
-//     }
-//     try {
-//       const result = await ticketDao.getTickets(req.params.tid);
-//       if (result.error) { res.status(404).json(result); }
-//       if (!req.isAuthenticated()) {
-//         const allowed = result.map(({ content, ...rest }) => rest);
-//         res.json(allowed);
-//       } else {
-//         const rendered = result.map(t => {
-//           t.content.replce(/\n/g, '<br>');
-//         });
-//         res.json(rendered);
-//       }
-//     } catch (err) {
-//       res.status(500).send({error: err});
-//     }
-// });
-
 app.post('/api/tickets', isLoggedIn,
   [
     check('title').isLength({ min: 1, max: maxTitleLength }),
@@ -316,7 +292,7 @@ app.post('/api/blocks', isLoggedIn,
       } catch (err) {
         return res.status(503).json({ error: `${err}` });
       }
-    } else {return res.status(403).json({error: "Forbidden"})}
+    } else { return res.status(403).json({error: "Forbidden"}); }
 });
 
 /******************/
